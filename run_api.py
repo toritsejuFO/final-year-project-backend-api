@@ -1,5 +1,6 @@
 import os
 import sys
+import unittest
 
 from dotenv import load_dotenv
 from flask_migrate import Migrate
@@ -17,8 +18,13 @@ app.app_context().push()
 
 migrate = Migrate(app, db)
 
-@app.cli.command('tod')
+@app.cli.command()
 def test():
-    print('Testing 1 2...')
+    tests = unittest.TestLoader().discover('test', pattern='test*.py')
+    result = unittest.TextTestRunner(verbosity=2).run(tests)
+    if result.wasSuccessful():
+        return True
+    else:
+        return False
 
 from utils import cli_utils
