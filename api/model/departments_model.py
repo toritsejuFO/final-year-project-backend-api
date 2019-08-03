@@ -13,7 +13,7 @@ class Department(db.Model):
     def __init__(self, name=None, code=None, school_code=None):
         self.name = name
         self.code = code
-        self.school = School.query.filter_by(code=school_code).first
+        self.school = School.query.filter_by(code=school_code).first()
 
     def save(self):
         db.session.add(self)
