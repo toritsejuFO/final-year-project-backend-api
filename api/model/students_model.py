@@ -23,13 +23,12 @@ class Student(db.Model):
     graduated = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    def __init__(self, firstname=None, lastname=None, othername=None, reg_no=None, level=None, email=None, password=None):
+    def __init__(self, firstname=None, lastname=None, othername=None, reg_no=None, email=None, password=None):
         self.firstname = firstname
         self.lastname = lastname
         self.othername = othername
         self.reg_no = reg_no
         self.email = email
-        self.level = Level.query.filter_by(level=level).first()
         self.password = password
 
     def to_dict(self):
