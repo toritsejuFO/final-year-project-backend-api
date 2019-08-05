@@ -1,7 +1,10 @@
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 
+import  arrow
+
 from api import db
+from api.model import Level
 
 
 class Student(db.Model):
@@ -26,7 +29,48 @@ class Student(db.Model):
         self.othername = othername
         self.reg_no = reg_no
         self.email = email
+        self.level = Level.query.filter_by(level=level).first()
         self.password = password
+
+    def to_dict(self):
+        if not self.department:
+            department = None
+        json_user = {
+            'firstname': self.firstname,
+            'lastname': self.lastname,
+            'othername': self.othername,
+            'reg_no': self.reg_no,
+            'email': self.email,
+            'level': self.get_level,
+            'department': self.get_department,
+            'school': self.get_school,
+            'fingerprint': self.fingerprint_template,
+            'graduated': self.graduated,
+            'registered_on': arrow.get(self.created_at).for_json(),
+            'registered_since': arrow.get(self.created_at).humanize(),
+        }
+        return json_user
+
+    @property
+    def get_level(self):
+        level = None
+        if self.level is not None:
+            level = self.level.level
+        return level
+
+    @property
+    def get_department(self):
+        department = None
+        if self.department is not None:
+            department = self.department.code
+        return department
+
+    @property
+    def get_school(self):
+        school = None
+        if self.department is not None:
+            school = self.department.school.code
+        return school
 
     @property
     def password(self):
