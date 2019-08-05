@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_restplus import Api
+from logger import file_handler
 
 from config import config_by_env
 
@@ -24,5 +25,9 @@ def create_app(config_name):
     app.config.from_object(config_by_env[config_name])
     db.init_app(app)
     api.init_app(app)
+    app.logger.addHandler(file_handler)
+
+    from api.controller import student_api as student_ns
+    api.add_namespace(student_ns, path='/students')
 
     return app

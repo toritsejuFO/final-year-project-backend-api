@@ -1,10 +1,15 @@
 import os
 import sys
+import unittest
 
+import arrow
+from flask import request
 from dotenv import load_dotenv
 from flask_migrate import Migrate
 
 from api import create_app, db
+from logger import request_logger
+from api.model import Student, Level, School, Department
 
 load_dotenv()
 
@@ -17,8 +22,43 @@ app.app_context().push()
 
 migrate = Migrate(app, db)
 
-@app.cli.command('tod')
+@app.shell_context_processor
+def make_shell_context():
+    return {
+        'db': db,
+        'Student': Student,
+        'Level': Level,
+        'School': School, 
+        'Department': Department
+    }
+
+@app.cli.command()
+def run():
+    app.run()
+
+@app.cli.command()
 def test():
-    print('Testing 1 2...')
+    tests = unittest.TestLoader().discover('test', pattern='test*.py')
+    result = unittest.TextTestRunner(verbosity=2).run(tests)
+    if result.wasSuccessful():
+        return True
+    else:
+        return False
+
+@app.after_request
+def log_info(response):
+    date = arrow.now('Africa/Lagos')
+    log_details = {
+        'date': str(date),
+        'user_ip': request.remote_addr,
+        'browser': request.user_agent.browser,
+        'user_device': request.user_agent.platform,
+        'method': request.method,
+        'request_url': request.url,
+        'status_code': response.status_code,
+    }
+    request_logger.warning(log_details)
+    app.logger.info(log_details)
+    return response
 
 from utils import cli_utils
