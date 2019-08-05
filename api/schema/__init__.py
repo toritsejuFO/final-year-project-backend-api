@@ -1,0 +1,1 @@
+from api.schema.students_schema import NewStudentSchema
