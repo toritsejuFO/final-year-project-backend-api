@@ -1,9 +1,12 @@
 from flask import request
 from flask_restplus import Resource, Namespace, fields
+from marshmallow import ValidationError
 
 from api.service import StudentService
+from api.schema import NewStudentSchema
 
-student_api = Namespace('students', description='API endpoints for managin Student Resource')
+student_api = Namespace(
+    'students', description='API endpoints for managin Student Resource')
 student_reg = student_api.model('Student Registration', {
     'firstname': fields.String(required=True, description='Student\'s firstname'),
     'lastname': fields.String(required=True, description='Student\'s lastname'),
@@ -19,6 +22,7 @@ student_edit = student_api.model('Student Update', {
     'department': fields.String(required=True, description='Student\'s department'),
 })
 
+
 @student_api.route('')
 class StudentList(Resource):
     @student_api.doc('Get all students')
@@ -27,3 +31,23 @@ class StudentList(Resource):
         return response, code
 
 
+@student_api.route('/signup')
+class students(Resource):
+    @student_api.doc('Register a new student')
+    @student_api.response(201, 'New student successfully registered')
+    @student_api.expect(student_reg)
+    def post(self):
+        data = request.json
+        payload = student_api.payload or data
+        schema = NewStudentSchema(strict=True)
+
+        try:
+            new_payload = schema.load(payload).data._asdict()
+        except ValidationError as e:
+            response = {
+                'status': False,
+                'message': e.messages
+            }
+            return response, 400
+        response, code = StudentService.create_student(data=new_payload)
+        return response, code
