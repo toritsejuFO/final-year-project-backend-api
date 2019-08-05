@@ -9,6 +9,7 @@ from flask_migrate import Migrate
 
 from api import create_app, db
 from logger import request_logger
+from api.model import Student, Level, School, Department
 
 load_dotenv()
 
@@ -20,6 +21,16 @@ app = create_app(os.environ.get('FLASK_ENV'))
 app.app_context().push()
 
 migrate = Migrate(app, db)
+
+@app.shell_context_processor
+def make_shell_context():
+    return {
+        'db': db,
+        'Student': Student,
+        'Level': Level,
+        'School': School, 
+        'Department': Department
+    }
 
 @app.cli.command()
 def run():
