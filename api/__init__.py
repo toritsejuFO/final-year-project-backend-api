@@ -28,6 +28,8 @@ def create_app(config_name):
     app.logger.addHandler(file_handler)
 
     from api.controller import student_api as student_ns
+    from api.controller import auth_api as auth_ns
     api.add_namespace(student_ns, path='/students')
+    api.add_namespace(auth_ns, path='/students')
 
     return app
