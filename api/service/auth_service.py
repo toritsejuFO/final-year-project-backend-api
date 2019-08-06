@@ -12,7 +12,7 @@ class AuthService():
 
         try:
             student = Student.query.filter_by(reg_no=reg_no).first()
-        except Exception as e:
+        except:
             response['status'] = False
             response['message'] = 'Internal Server Error'
             return response, 500

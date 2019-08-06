@@ -6,10 +6,9 @@ class StudentService():
         response = {}
         try:
             students = Student.query.all()
-        except Exception as e:
+        except:
             response['status'] = False
             response['message'] = 'Internal Server Error'
-            response['error'] = e
             return response, 500
 
         if not students:
@@ -27,10 +26,9 @@ class StudentService():
         try:
             student = Student(**data)
             student.save()
-        except Exception as e:
+        except:
             response['status'] = False
             response['message'] = 'Internal Server Error'
-            response['error'] = e
             return response, 500
 
         response['status'] = True
