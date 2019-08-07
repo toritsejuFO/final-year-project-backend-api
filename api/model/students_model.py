@@ -33,6 +33,7 @@ class Student(db.Model):
         self.email = email
         self.password = password
 
+    @property
     def to_dict(self):
         json_user = {
             'firstname': self.firstname,
