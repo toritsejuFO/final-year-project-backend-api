@@ -17,7 +17,7 @@ class StudentService():
             return response, 200
 
         response['status'] = True
-        response['data'] = [student.to_dict() for student in students]
+        response['data'] = [student.to_dict for student in students]
         return response, 200
 
     @staticmethod
@@ -33,5 +33,19 @@ class StudentService():
 
         response['status'] = True
         response['message'] = 'New student successfully registered'
-        response['data'] = student.to_dict()
+        response['data'] = student.to_dict
         return response, 201
+
+    @staticmethod
+    def get_me(reg_no):
+        response = {}
+        try:
+            student = Student.query.filter_by(reg_no=reg_no).first()
+        except:
+            response['status'] = False
+            response['message'] = 'Internal Server Error'
+            return response, 500
+
+        response['status'] = True
+        response['data'] = student.to_dict
+        return response, 200
