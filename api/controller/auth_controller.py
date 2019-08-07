@@ -47,6 +47,6 @@ class StudentLogout(Resource):
                 'status': False,
                 'message': 'Please provide a token'
             }
-            return response, 403
+            return response, 401
         response, code = AuthService.logout_student(auth_token=auth_token)
         return response, code
