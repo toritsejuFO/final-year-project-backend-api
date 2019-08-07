@@ -1,6 +1,8 @@
+from functools import wraps
 from datetime import datetime, timedelta
 
-from api.model import RevokedToken
+from flask import request
+
 from api.model import Student, RevokedToken
 
 class AuthService():
@@ -51,13 +53,13 @@ class AuthService():
         if isinstance(decoded_msg, str):
             response['status'] = False
             response['message'] = decoded_msg
-            return response, 403
+            return response, 401
 
         # Check revoked token
         if RevokedToken.check(token=auth_token):
             response['status'] = False
             response['message'] = 'Revoked token. Please log in again'
-            return response, 403
+            return response, 401
 
         # Mark token as revoked and logout student
         try:
@@ -72,3 +74,32 @@ class AuthService():
         response['message'] = 'Logged out successfully'
         return response, 200
 
+
+def login_required(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        response = {}
+        auth_token = request.headers.get('x-auth-token')
+        if not auth_token or auth_token is None:
+            response = {
+                'status': False,
+                'message': 'Please provide a token'
+            }
+            return response, 401
+
+        decoded_msg = Student.decode_auth_token(auth_token=auth_token)
+
+        # Error decoding token
+        if isinstance(decoded_msg, str):
+            response['status'] = False
+            response['message'] = decoded_msg
+            return response, 401
+
+        # Check revoked token
+        if RevokedToken.check(token=auth_token):
+            response['status'] = False
+            response['message'] = 'Revoked token. Please log in again'
+            return response, 401
+
+        return func(*args, **kwargs)
+    return wrapper
