@@ -101,5 +101,5 @@ def login_required(func):
             response['message'] = 'Revoked token. Please log in again'
             return response, 401
 
-        return func(*args, **kwargs)
+        return func(*args, **kwargs, payload=decoded_msg)
     return wrapper
