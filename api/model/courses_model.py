@@ -19,6 +19,18 @@ class Course(db.Model):
         self.department = Department.query.filter_by(code=department_code).first()
         self.semester = Semester.query.filter_by(semester=semester).first()
 
+    @property
+    def to_dict(self):
+        json_course = {
+            'course_code': self.code,
+            'course_title': self.title,
+            'level_oferred':  self.level.level,
+            'department': self.department.code,
+            'school': self.department.school.code,
+            'semester_offered': self.semester.semester
+        }
+        return json_course
+
     def save(self):
         db.session.add(self)
         db.session.commit()

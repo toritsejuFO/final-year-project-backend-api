@@ -5,23 +5,23 @@ from marshmallow import ValidationError
 from api.service import AuthService
 from api.schema import StudentLoginSchema
 
-auth_api = Namespace(
+student_auth_api = Namespace(
     'students', description='API endpoints for authenticating Students')
 
-student_login = auth_api.model('Student login', {
+student_login = student_auth_api.model('Student login', {
     'reg_no': fields.String(required=True, description='Student\'s reg number'),
     'password': fields.String(required=True, description='Student\'s password'),
 })
 
 
-@auth_api.route('/signin')
+@student_auth_api.route('/signin')
 class StudentLogin(Resource):
-    @auth_api.doc('Login a student')
-    @auth_api.response(200, 'Logged in successfully')
-    @auth_api.expect(student_login)
+    @student_auth_api.doc('Login a student')
+    @student_auth_api.response(200, 'Logged in successfully')
+    @student_auth_api.expect(student_login)
     def post(self):
         data = request.json
-        payload = auth_api.payload or data
+        payload = student_auth_api.payload or data
         schema = StudentLoginSchema(strict=True)
 
         try:
@@ -36,10 +36,10 @@ class StudentLogin(Resource):
         response, code = AuthService.login_student(data=new_payload)
         return response, code
 
-@auth_api.route('/signout')
+@student_auth_api.route('/signout')
 class StudentLogout(Resource):
-    @auth_api.doc('Log out a student', security='apiKey')
-    @auth_api.response(200, 'Logged in successfully')
+    @student_auth_api.doc('Log out a student', security='apiKey')
+    @student_auth_api.response(200, 'Logged in successfully')
     def get(self):
         auth_token = request.headers.get('x-auth-token')
         if not auth_token or auth_token is None:
