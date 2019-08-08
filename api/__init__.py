@@ -11,7 +11,7 @@ authorizations = {
     'apiKey': {
         'type': 'apiKey',
         'in': 'header',
-        'name': 'X-API-KEY'
+        'name': 'x-auth-token'
     }
 }
 

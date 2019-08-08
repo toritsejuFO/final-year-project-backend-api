@@ -38,7 +38,7 @@ class StudentLogin(Resource):
 
 @auth_api.route('/signout')
 class StudentLogout(Resource):
-    @auth_api.doc('Log out a student')
+    @auth_api.doc('Log out a student', security='apiKey')
     @auth_api.response(200, 'Logged in successfully')
     def get(self):
         auth_token = request.headers.get('x-auth-token')
