@@ -6,6 +6,7 @@ class Level(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     level = db.Column(db.String(3))
     students = db.relationship('Student', backref='level')
+    courses = db.relationship('Course', backref='level')
 
     def __init__(self, level=None):
         self.level = level

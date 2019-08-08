@@ -56,7 +56,7 @@ class Signup(Resource):
 @student_api.route('/me')
 class Me(Resource):
     @login_required
-    @student_api.doc('View student details')
+    @student_api.doc('View student details', security='apiKey')
     def get(self, decoded_payload):
         reg_no = decoded_payload.get('reg_no')
         response, code = StudentService.get_me(reg_no=reg_no)
@@ -66,6 +66,7 @@ class Me(Resource):
 class EditMe(Resource):
     @login_required
     @student_api.expect(edit_me)
+    @student_api.doc('Edit/Update student details', security='apiKey')
     def post(self, decoded_payload):
         reg_no = decoded_payload.get('reg_no')
         data = request.json
