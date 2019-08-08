@@ -47,6 +47,7 @@ class Student(db.Model):
             'school': self.get_school,
             'fingerprint': self.fingerprint_template,
             'graduated': self.graduated,
+            'reg_completed': self.reg_complete,
             'registered_on': arrow.get(self.created_at).for_json(),
             'registered_since': arrow.get(self.created_at).humanize(),
         }
