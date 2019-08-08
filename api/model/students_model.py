@@ -36,7 +36,7 @@ class Student(db.Model):
 
     @property
     def to_dict(self):
-        json_user = {
+        json_student = {
             'firstname': self.firstname,
             'lastname': self.lastname,
             'othername': self.othername,
@@ -50,7 +50,7 @@ class Student(db.Model):
             'registered_on': arrow.get(self.created_at).for_json(),
             'registered_since': arrow.get(self.created_at).humanize(),
         }
-        return json_user
+        return json_student
 
     def encode_auth_token(self, data=None, expiry=datetime.utcnow() + timedelta(days=1)):
         if data is None:
