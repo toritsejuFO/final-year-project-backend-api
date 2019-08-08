@@ -38,6 +38,8 @@ class StudentLogin(Resource):
 
 @auth_api.route('/signout')
 class StudentLogout(Resource):
+    @auth_api.doc('Log out a student')
+    @auth_api.response(200, 'Logged in successfully')
     def get(self):
         auth_token = request.headers.get('x-auth-token')
         if not auth_token or auth_token is None:
@@ -45,6 +47,6 @@ class StudentLogout(Resource):
                 'status': False,
                 'message': 'Please provide a token'
             }
-            return response, 403
+            return response, 401
         response, code = AuthService.logout_student(auth_token=auth_token)
         return response, code
