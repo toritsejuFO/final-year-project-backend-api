@@ -6,6 +6,7 @@ course_api = Namespace('courses', description='API endpoints for manaigin course
 
 @course_api.route('')
 class CourseList(Resource):
+    @course_api.doc('Get All Courses')
     def get(self):
         response, code = CourseService.get_all_courses()
         return response, code
