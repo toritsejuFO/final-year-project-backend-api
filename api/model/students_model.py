@@ -24,6 +24,7 @@ class Student(db.Model):
     fingerprint_template = db.Column(db.String(256), unique=True, index=True, default=None)
     graduated = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    reg_complete = db.Column(db.Boolean, default=False)
 
     def __init__(self, firstname=None, lastname=None, othername=None, reg_no=None, email=None, password=None):
         self.firstname = firstname
