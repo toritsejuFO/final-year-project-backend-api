@@ -4,7 +4,7 @@ from marshmallow import Schema, ValidationError, fields, post_load, validates
 
 from api.model import Lecturer, Department
 
-NewLecturer = namedtuple('LNewLecturer', [
+NewLecturer = namedtuple('NewLecturer', [
     'name',
     'email',
     'department',
