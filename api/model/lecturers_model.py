@@ -18,7 +18,7 @@ class Lecturer(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __init__(self, name, email, department_code, password):
-        self.name = name
+        self.name = name.title()
         self.email = email
         self.department = Department.query.filter_by(code=department_code).first()
         self.password = password
