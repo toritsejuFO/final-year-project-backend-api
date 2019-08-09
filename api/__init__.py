@@ -30,8 +30,10 @@ def create_app(config_name):
     from api.controller import student_api as student_ns
     from api.controller import student_auth_api as student_auth_ns
     from api.controller import course_api as course_ns
+    from api.controller import lecturer_api as lecturer_ns
     api.add_namespace(student_ns, path='/students')
     api.add_namespace(student_auth_ns, path='/students')
     api.add_namespace(course_ns, path='/courses')
+    api.add_namespace(lecturer_ns, path='/lecturers')
 
     return app
