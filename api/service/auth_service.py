@@ -16,7 +16,7 @@ class AuthService():
 
         try:
             student = Student.query.filter_by(reg_no=reg_no).first()
-        except:
+        except Exception:
             response['status'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
@@ -49,16 +49,16 @@ class AuthService():
     @staticmethod
     def logout_student(auth_token):
         response = {}
-        decoded_msg = decode_auth_token(auth_token=auth_token)
+        decoded_payload = decode_auth_token(auth_token=auth_token)
 
         # Error decoding error
-        if isinstance(decoded_msg, str):
+        if isinstance(decoded_payload, str):
             response['status'] = False
-            response['message'] = decoded_msg
+            response['message'] = decoded_payload
             return response, 401
 
         # Ensure this method logs out only students
-        if decoded_msg.get('reg_no') is None:
+        if decoded_payload.get('reg_no') is None:
             response['status'] = True
             response['message'] = 'Unathorized to perform action'
             return response, 403
@@ -73,7 +73,7 @@ class AuthService():
         try:
             revoked_token = RevokedToken(token=auth_token)
             revoked_token.save()
-        except:
+        except Exception:
             response['status'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
@@ -90,7 +90,7 @@ class AuthService():
 
         try:
             lecturer = Lecturer.query.filter_by(email=email).first()
-        except:
+        except Exception:
             response['status'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
@@ -106,7 +106,8 @@ class AuthService():
             return response, 401
 
         encode_data = {
-            'email': lecturer.email
+            'email': lecturer.email,
+            'lecturer': True
         }
         token = encode_auth_token(data=encode_data, expiry=datetime.utcnow() + timedelta(days=1))
 
@@ -118,6 +119,42 @@ class AuthService():
         response['status'] = True
         response['message'] = 'Logged in successfully'
         response['x-auth-token'] = token.decode()
+        return response, 200
+
+    @staticmethod
+    def logout_lecturer(auth_token):
+        response = {}
+        decoded_payload = decode_auth_token(auth_token=auth_token)
+
+        # Error decoding error
+        if isinstance(decoded_payload, str):
+            response['status'] = False
+            response['message'] = decoded_payload
+            return response, 401
+
+        # Ensure this method logs out only lecturers
+        if decoded_payload.get('lecturer') is None:
+            response['status'] = True
+            response['message'] = 'Unathorized to perform action'
+            return response, 403
+
+        # Check revoked token
+        if RevokedToken.check(token=auth_token):
+            response['status'] = False
+            response['message'] = 'Revoked token. Please log in again'
+            return response, 401
+
+        # Mark token as revoked and logout student
+        try:
+            revoked_token = RevokedToken(token=auth_token)
+            revoked_token.save()
+        except Exception:
+            response['status'] = False
+            response['message'] = 'Internal Server Error'
+            return response, 500
+
+        response['status'] = True
+        response['message'] = 'Logged out successfully'
         return response, 200
 
 
@@ -167,12 +204,12 @@ def student_login_required(func):
             }
             return response, 401
 
-        decoded_msg = decode_auth_token(auth_token=auth_token)
+        decoded_payload = decode_auth_token(auth_token=auth_token)
 
         # Error decoding token
-        if isinstance(decoded_msg, str):
+        if isinstance(decoded_payload, str):
             response['status'] = False
-            response['message'] = decoded_msg
+            response['message'] = decoded_payload
             return response, 401
 
         # Check revoked token
@@ -181,7 +218,7 @@ def student_login_required(func):
             response['message'] = 'Revoked token. Please log in again'
             return response, 401
 
-        return func(*args, **kwargs, decoded_payload=decoded_msg)
+        return func(*args, **kwargs, decoded_payload=decoded_payload)
     return wrapper
 
 ########################################################
