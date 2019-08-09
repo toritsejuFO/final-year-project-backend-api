@@ -17,7 +17,7 @@ lecturer_reg = lecturer_api.model('Lecturer Registration', {
 
 
 @lecturer_api.route('/signup')
-class Signup(Resource):
+class LecturerSignup(Resource):
     @lecturer_api.doc('Register a new lecturer')
     @lecturer_api.response(201, 'New lecturer successfully registered')
     @lecturer_api.expect(lecturer_reg)
