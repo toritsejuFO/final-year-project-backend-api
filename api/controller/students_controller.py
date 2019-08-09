@@ -2,7 +2,7 @@ from flask import request
 from flask_restplus import Resource, Namespace, fields
 from marshmallow import ValidationError
 
-from api.service import StudentService, login_required
+from api.service import StudentService, student_login_required
 from api.schema import NewStudentSchema, EditMeSchema
 
 student_api = Namespace(
@@ -55,7 +55,7 @@ class Signup(Resource):
 
 @student_api.route('/me')
 class Me(Resource):
-    @login_required
+    @student_login_required
     @student_api.doc('View student details', security='apiKey')
     def get(self, decoded_payload):
         reg_no = decoded_payload.get('reg_no')
@@ -64,7 +64,7 @@ class Me(Resource):
 
 @student_api.route('/edit-me')
 class EditMe(Resource):
-    @login_required
+    @student_login_required
     @student_api.expect(edit_me)
     @student_api.doc('Edit/Update student details', security='apiKey')
     def post(self, decoded_payload):
