@@ -1,9 +1,11 @@
 from functools import wraps
 from datetime import datetime, timedelta
 
+import jwt
 from flask import request
 
-from api.model import Student, RevokedToken
+from api.model import Student, RevokedToken, Lecturer
+from config import jwt_key
 
 class AuthService():
     @staticmethod
@@ -74,6 +76,78 @@ class AuthService():
         response['message'] = 'Logged out successfully'
         return response, 200
 
+    @staticmethod
+    def login_lecturer(data):
+        response = {}
+        email = data['email']
+        password = data['password']
+
+        try:
+            lecturer = Lecturer.query.filter_by(email=email).first()
+        except:
+            response['status'] = False
+            response['message'] = 'Internal Server Error'
+            return response, 500
+
+        if not lecturer:
+            response['status'] = False
+            response['message'] = 'Invalid email or password'
+            return response, 401
+
+        if not lecturer.verify_password(password):
+            response['status'] = False
+            response['message'] = 'Invalid email or password'
+            return response, 401
+
+        encode_data = {
+            'email': lecturer.email
+        }
+        token = encode_auth_token(data=encode_data, expiry=datetime.utcnow() + timedelta(days=1))
+
+        if not isinstance(token, bytes):
+            response['status'] = False
+            response['message'] = token
+            return response, 500
+
+        response['status'] = True
+        response['message'] = 'Logged in successfully'
+        response['x-auth-token'] = token.decode()
+        return response, 200
+
+
+#####################################################################################
+############### Helper methods for encoding and decoding auth tokens ################
+#####################################################################################
+
+def encode_auth_token(data=None, expiry=datetime.utcnow() + timedelta(days=1)):
+    if data is None:
+        return 'Invalid "sub"[subscriber] passed'
+    try:
+        payload = {
+            'sub': data,
+            'exp': expiry,
+            'iat': datetime.utcnow()
+        }
+        return jwt.encode(payload, jwt_key, algorithm='HS256')
+    except Exception as e:
+        return repr(e)
+
+def decode_auth_token(auth_token=None):
+    try:
+        payload = jwt.decode(auth_token, jwt_key)
+        return payload['sub']
+    except jwt.ExpiredSignatureError:
+        return 'Expired token. Please log in again'
+    except jwt.InvalidTokenError:
+        return 'Invalid token. Please log in again'
+
+#####################################################################################
+#####################################################################################
+
+
+########################################################
+############ Decorators for Authentication #############
+########################################################
 
 def student_login_required(func):
     @wraps(func)
@@ -103,3 +177,6 @@ def student_login_required(func):
 
         return func(*args, **kwargs, decoded_payload=decoded_msg)
     return wrapper
+
+########################################################
+########################################################
