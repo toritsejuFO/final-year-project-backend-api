@@ -2,7 +2,7 @@ from flask import request
 from flask_restplus import Resource, Namespace, fields
 from marshmallow import ValidationError
 
-from api.service import LecturerService
+from api.service import LecturerService, lecturer_login_required
 from api.schema import NewLecturerSchema
 
 lecturer_api = Namespace(
@@ -35,4 +35,13 @@ class LecturerSignup(Resource):
             }
             return response, 400
         response, code = LecturerService.create_lecturer(data=new_payload)
+        return response, code
+
+@lecturer_api.route('/me')
+class Me(Resource):
+    @lecturer_login_required
+    @lecturer_api.doc('View Lecturer details', security='apiKey')
+    def get(self, decoded_payload):
+        email = decoded_payload.get('email')
+        response, code = LecturerService.get_me(email=email)
         return response, code
