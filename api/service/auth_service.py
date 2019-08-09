@@ -75,7 +75,7 @@ class AuthService():
         return response, 200
 
 
-def login_required(func):
+def student_login_required(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         response = {}
