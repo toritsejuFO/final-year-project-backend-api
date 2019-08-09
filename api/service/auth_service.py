@@ -57,6 +57,12 @@ class AuthService():
             response['message'] = decoded_msg
             return response, 401
 
+        # Ensure this method logs out only students
+        if decoded_msg.get('reg_no') is None:
+            response['status'] = True
+            response['message'] = 'Unathorized to perform action'
+            return response, 403
+
         # Check revoked token
         if RevokedToken.check(token=auth_token):
             response['status'] = False
