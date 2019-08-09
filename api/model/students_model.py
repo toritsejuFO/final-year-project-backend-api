@@ -2,11 +2,9 @@ from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 
 import  arrow
-import jwt
 
 from api import db
 from api.model import Level
-from config import jwt_key
 
 
 class Student(db.Model):
@@ -52,29 +50,6 @@ class Student(db.Model):
             'registered_since': arrow.get(self.created_at).humanize(),
         }
         return json_student
-
-    def encode_auth_token(self, data=None, expiry=datetime.utcnow() + timedelta(days=1)):
-        if data is None:
-            return 'Invalid "sub"[subscriber] passed'
-        try:
-            payload = {
-                'sub': data,
-                'exp': expiry,
-                'iat': datetime.utcnow()
-            }
-            return jwt.encode(payload, jwt_key, algorithm='HS256')
-        except Exception as e:
-            return repr(e)
-
-    @staticmethod
-    def decode_auth_token(auth_token=None):
-        try:
-            payload = jwt.decode(auth_token, jwt_key)
-            return payload['sub']
-        except jwt.ExpiredSignatureError:
-            return 'Expired token. Please log in again'
-        except jwt.InvalidTokenError:
-            return 'Invalid token. Please log in again'
 
     @property
     def get_level(self):

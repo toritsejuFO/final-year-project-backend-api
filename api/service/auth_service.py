@@ -34,7 +34,7 @@ class AuthService():
         encode_data = {
             'reg_no': student.reg_no
         }
-        token = student.encode_auth_token(data=encode_data, expiry=datetime.utcnow() + timedelta(days=1))
+        token = encode_auth_token(data=encode_data, expiry=datetime.utcnow() + timedelta(days=1))
 
         if not isinstance(token, bytes):
             response['status'] = False
@@ -49,7 +49,7 @@ class AuthService():
     @staticmethod
     def logout_student(auth_token):
         response = {}
-        decoded_msg = Student.decode_auth_token(auth_token=auth_token)
+        decoded_msg = decode_auth_token(auth_token=auth_token)
 
         # Error decoding error
         if isinstance(decoded_msg, str):
@@ -161,7 +161,7 @@ def student_login_required(func):
             }
             return response, 401
 
-        decoded_msg = Student.decode_auth_token(auth_token=auth_token)
+        decoded_msg = decode_auth_token(auth_token=auth_token)
 
         # Error decoding token
         if isinstance(decoded_msg, str):
