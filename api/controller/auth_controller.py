@@ -48,7 +48,7 @@ class StudentLogin(Resource):
 @student_auth_api.route('/signout')
 class StudentLogout(Resource):
     @student_auth_api.doc('Log out a student', security='apiKey')
-    @student_auth_api.response(200, 'Logged in successfully')
+    @student_auth_api.response(200, 'Logged out successfully')
     def get(self):
         auth_token = request.headers.get('x-auth-token')
         if not auth_token or auth_token is None:
@@ -81,4 +81,19 @@ class LecturerLogin(Resource):
             return response, 400
 
         response, code = AuthService.login_lecturer(data=new_payload)
+        return response, code
+
+@lecturer_auth_api.route('/signout')
+class LecturerLogout(Resource):
+    @lecturer_auth_api.doc('Log out a lecturer', security='apiKey')
+    @lecturer_auth_api.response(200, 'Logged out successfully')
+    def get(self):
+        auth_token = request.headers.get('x-auth-token')
+        if not auth_token or auth_token is None:
+            response = {
+                'status': False,
+                'message': 'Please provide a token'
+            }
+            return response, 401
+        response, code = AuthService.logout_lecturer(auth_token=auth_token)
         return response, code
