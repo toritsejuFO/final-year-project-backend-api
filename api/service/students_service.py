@@ -12,9 +12,9 @@ class StudentService():
             return response, 500
 
         if not students:
-            response['status'] = True
-            response['message'] = 'Students not found'
-            return response, 200
+            response['status'] = False
+            response['message'] = 'Students Not Found'
+            return response, 404
 
         response['status'] = True
         response['data'] = [student.to_dict for student in students]
@@ -48,8 +48,8 @@ class StudentService():
 
         if not student:
             response['status'] = False
-            response['message'] = 'Student does not exist anymore'
-            return response, 400
+            response['message'] = 'Student Not Found'
+            return response, 404
 
         response['status'] = True
         response['data'] = student.to_dict
@@ -69,8 +69,8 @@ class StudentService():
 
         if not student:
             response['status'] = False
-            response['message'] = 'Student does not exist anymore'
-            return response, 400
+            response['message'] = 'Student Not Found'
+            return response, 404
 
         if student.reg_complete:
             response['status'] = False
