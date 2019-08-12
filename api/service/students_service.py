@@ -33,7 +33,6 @@ class StudentService():
 
         response['status'] = True
         response['message'] = 'New student successfully registered'
-        response['data'] = student.to_dict
         return response, 201
 
     @staticmethod
