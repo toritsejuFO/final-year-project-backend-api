@@ -18,6 +18,7 @@ pyjwt = "*"
 marshmallow = "*"
 arrow = "*"
 pymysql = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.6"
