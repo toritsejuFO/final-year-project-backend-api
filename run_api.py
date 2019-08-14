@@ -36,7 +36,7 @@ def make_shell_context():
 
 @app.cli.command()
 def run():
-    app.run()
+    app.run(host='0.0.0.0')
 
 @app.cli.command()
 def test():
@@ -59,8 +59,13 @@ def log_info(response):
         'request_url': request.url,
         'status_code': response.status_code,
     }
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type, x-auth-token')
     request_logger.warning(log_details)
     app.logger.info(log_details)
     return response
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port='5000')
 
 from utils import cli_utils
