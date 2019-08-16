@@ -32,10 +32,12 @@ def create_app(config_name):
     from api.controller import course_api as course_ns
     from api.controller import lecturer_api as lecturer_ns
     from api.controller import lecturer_auth_api as lecturer_auth_ns
+    from api.controller import hod_api as hod_ns
     api.add_namespace(student_ns, path='/students')
     api.add_namespace(student_auth_ns, path='/students')
     api.add_namespace(course_ns, path='/courses')
     api.add_namespace(lecturer_ns, path='/lecturers')
     api.add_namespace(lecturer_auth_ns, path='/lecturers')
+    api.add_namespace(hod_ns, path='/hods')
 
     return app
