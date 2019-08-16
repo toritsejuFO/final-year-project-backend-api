@@ -11,6 +11,7 @@ class Department(db.Model):
     students = db.relationship('Student', backref='department')
     courses = db.relationship('Course', backref='department')
     lecturers = db.relationship('Lecturer', backref='department')
+    hods = db.relationship('HOD', backref='department')
 
     def __init__(self, name=None, code=None, school_code=None):
         self.name = name

@@ -2,16 +2,16 @@ from collections import namedtuple
 
 from marshmallow import Schema, ValidationError, fields, post_load, validates
 
-from api.model import Lecturer, Department
+from api.model import HOD, Department
 
-NewLecturer = namedtuple('NewLecturer', [
+NewHOD = namedtuple('NewHOD', [
     'name',
     'email',
     'department',
     'password'
 ])
 
-class NewLecturerSchema(Schema):
+class NewHODSchema(Schema):
     name = fields.String(required=True, error_messages={'required': 'Name is required'})
     email = fields.Email(required=True, error_messages={'required': 'Email is required'})
     department = fields.String(required=True, error_messages={'required': 'Department is required'})
@@ -19,7 +19,7 @@ class NewLecturerSchema(Schema):
 
     @post_load
     def new_lecturer(self, data):
-        return NewLecturer(**data)
+        return NewHOD(**data)
 
     @validates('name')
     def validate_name(self, value):
@@ -32,13 +32,13 @@ class NewLecturerSchema(Schema):
     @validates('email')
     def Validate_email(self, value):
         max_len = 128
-        lecturer = Lecturer.query.filter_by(email=value).first()
+        hod = HOD.query.filter_by(email=value).first()
         if not value:
             raise ValidationError('Email cannot be empty')
         if len(value) > max_len:
-            raise ValidationError(f'Email cannot excedd {max_len} characters')
-        if lecturer:
-            raise ValidationError('Lecturer with this email already exists')
+            raise ValidationError(f'Email cannot exceed {max_len} characters')
+        if hod:
+            raise ValidationError('HODs with this email already exists')
 
     @validates('department')
     def validate_department(self, value):
@@ -46,7 +46,7 @@ class NewLecturerSchema(Schema):
         if not value:
             raise ValidationError('department cannot be empty')
         if not dept:
-            raise ValidationError('Sorry, Lecturers from this department cannot use the system currently')
+            raise ValidationError('Sorry, HODs from this department cannot use the system currently')
 
     @validates('password')
     def validate_password(self, value):
