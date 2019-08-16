@@ -42,12 +42,9 @@ class NewLecturerSchema(Schema):
 
     @validates('department')
     def validate_department(self, value):
+        dept = Department.query.filter_by(code=value).first()
         if not value:
             raise ValidationError('department cannot be empty')
-        try:
-            dept = Department.query.filter_by(code=value).first()
-        except:
-            raise ValidationError('Internal Server Error')
         if not dept:
             raise ValidationError('Sorry, Lecturers from this department cannot use the system currently')
 
