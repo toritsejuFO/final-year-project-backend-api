@@ -7,7 +7,7 @@ from api import db
 from api.model import Department
 
 
-class Hod(db.Model):
+class HOD(db.Model):
     __tablename__ = 'hods'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
