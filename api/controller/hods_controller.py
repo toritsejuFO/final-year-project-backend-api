@@ -2,7 +2,7 @@ from flask import request
 from flask_restplus import Resource, Namespace, fields
 from marshmallow import ValidationError
 
-from api.service import HODService #, hod_login_required
+from api.service import HODService, hod_login_required
 from api.schema import NewHODSchema
 
 hod_api = Namespace(
@@ -39,7 +39,7 @@ class HODSignup(Resource):
 
 @hod_api.route('/me')
 class Me(Resource):
-    # @hod_login_required
+    @hod_login_required
     @hod_api.doc('View HOD details', security='apiKey')
     def get(self, decoded_payload):
         email = decoded_payload.get('email')

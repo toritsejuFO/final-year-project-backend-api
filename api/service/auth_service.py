@@ -325,5 +325,34 @@ def lecturer_login_required(func):
         return func(*args, **kwargs, decoded_payload=decoded_payload)
     return wrapper
 
+def hod_login_required(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        response = {}
+        auth_token = request.headers.get('x-auth-token')
+        if not auth_token or auth_token is None:
+            response = {
+                'status': False,
+                'message': 'Please provide a token'
+            }
+            return response, 401
+
+        decoded_payload = decode_auth_token(auth_token=auth_token)
+
+        # Error decoding token
+        if isinstance(decoded_payload, str):
+            response['status'] = False
+            response['message'] = decoded_payload
+            return response, 401
+
+        # Check revoked token
+        if RevokedToken.check(token=auth_token):
+            response['status'] = False
+            response['message'] = 'Revoked token. Please log in again'
+            return response, 401
+
+        return func(*args, **kwargs, decoded_payload=decoded_payload)
+    return wrapper
+
 ########################################################
 ########################################################
