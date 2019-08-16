@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import jwt
 from flask import request
 
-from api.model import Student, RevokedToken, Lecturer
+from api.model import Student, RevokedToken, Lecturer, HOD
 from config import jwt_key
 
 class AuthService():
@@ -134,6 +134,81 @@ class AuthService():
 
         # Ensure this method logs out only lecturers
         if decoded_payload.get('lecturer') is None:
+            response['status'] = True
+            response['message'] = 'Unathorized to perform action'
+            return response, 403
+
+        # Check revoked token
+        if RevokedToken.check(token=auth_token):
+            response['status'] = False
+            response['message'] = 'Revoked token. Please log in again'
+            return response, 401
+
+        # Mark token as revoked and logout student
+        try:
+            revoked_token = RevokedToken(token=auth_token)
+            revoked_token.save()
+        except Exception:
+            response['status'] = False
+            response['message'] = 'Internal Server Error'
+            return response, 500
+
+        response['status'] = True
+        response['message'] = 'Logged out successfully'
+        return response, 200
+
+    @staticmethod
+    def login_hod(data):
+        response = {}
+        email = data['email']
+        password = data['password']
+
+        try:
+            hod = HOD.query.filter_by(email=email).first()
+        except Exception:
+            response['status'] = False
+            response['message'] = 'Internal Server Error'
+            return response, 500
+
+        if not hod:
+            response['status'] = False
+            response['message'] = 'Invalid email or password'
+            return response, 401
+
+        if not hod.verify_password(password):
+            response['status'] = False
+            response['message'] = 'Invalid email or password'
+            return response, 401
+
+        encode_data = {
+            'email': hod.email,
+            'hod': True
+        }
+        token = encode_auth_token(data=encode_data, expiry=datetime.utcnow() + timedelta(days=1))
+
+        if not isinstance(token, bytes):
+            response['status'] = False
+            response['message'] = token
+            return response, 500
+
+        response['status'] = True
+        response['message'] = 'Logged in successfully'
+        response['x-auth-token'] = token.decode()
+        return response, 200
+
+    @staticmethod
+    def logout_hod(auth_token):
+        response = {}
+        decoded_payload = decode_auth_token(auth_token=auth_token)
+
+        # Error decoding error
+        if isinstance(decoded_payload, str):
+            response['status'] = False
+            response['message'] = decoded_payload
+            return response, 401
+
+        # Ensure this method logs out only hods
+        if decoded_payload.get('hod') is None:
             response['status'] = True
             response['message'] = 'Unathorized to perform action'
             return response, 403
