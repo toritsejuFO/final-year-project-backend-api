@@ -17,17 +17,17 @@ class AuthService():
         try:
             student = Student.query.filter_by(reg_no=reg_no).first()
         except Exception:
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
 
         if not student:
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Invalid reg number or password'
             return response, 401
 
         if not student.verify_password(password):
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Invalid reg number or password'
             return response, 401
 
@@ -37,11 +37,11 @@ class AuthService():
         token = encode_auth_token(data=encode_data, expiry=datetime.utcnow() + timedelta(days=1))
 
         if not isinstance(token, bytes):
-            response['status'] = False
+            response['success'] = False
             response['message'] = token
             return response, 500
 
-        response['status'] = True
+        response['success'] = True
         response['message'] = 'Logged in successfully'
         response['x-auth-token'] = token.decode()
         return response, 200
@@ -53,19 +53,19 @@ class AuthService():
 
         # Error decoding error
         if isinstance(decoded_payload, str):
-            response['status'] = False
+            response['success'] = False
             response['message'] = decoded_payload
             return response, 401
 
         # Ensure this method logs out only students
         if decoded_payload.get('reg_no') is None:
-            response['status'] = True
+            response['success'] = True
             response['message'] = 'Unathorized to perform action'
             return response, 403
 
         # Check revoked token
         if RevokedToken.check(token=auth_token):
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Revoked token. Please log in again'
             return response, 401
 
@@ -74,11 +74,11 @@ class AuthService():
             revoked_token = RevokedToken(token=auth_token)
             revoked_token.save()
         except Exception:
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
 
-        response['status'] = True
+        response['success'] = True
         response['message'] = 'Logged out successfully'
         return response, 200
 
@@ -91,17 +91,17 @@ class AuthService():
         try:
             lecturer = Lecturer.query.filter_by(email=email).first()
         except Exception:
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
 
         if not lecturer:
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Invalid email or password'
             return response, 401
 
         if not lecturer.verify_password(password):
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Invalid email or password'
             return response, 401
 
@@ -112,11 +112,11 @@ class AuthService():
         token = encode_auth_token(data=encode_data, expiry=datetime.utcnow() + timedelta(days=1))
 
         if not isinstance(token, bytes):
-            response['status'] = False
+            response['success'] = False
             response['message'] = token
             return response, 500
 
-        response['status'] = True
+        response['success'] = True
         response['message'] = 'Logged in successfully'
         response['x-auth-token'] = token.decode()
         return response, 200
@@ -128,19 +128,19 @@ class AuthService():
 
         # Error decoding error
         if isinstance(decoded_payload, str):
-            response['status'] = False
+            response['success'] = False
             response['message'] = decoded_payload
             return response, 401
 
         # Ensure this method logs out only lecturers
         if decoded_payload.get('lecturer') is None:
-            response['status'] = True
+            response['success'] = True
             response['message'] = 'Unathorized to perform action'
             return response, 403
 
         # Check revoked token
         if RevokedToken.check(token=auth_token):
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Revoked token. Please log in again'
             return response, 401
 
@@ -149,11 +149,11 @@ class AuthService():
             revoked_token = RevokedToken(token=auth_token)
             revoked_token.save()
         except Exception:
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
 
-        response['status'] = True
+        response['success'] = True
         response['message'] = 'Logged out successfully'
         return response, 200
 
@@ -166,17 +166,17 @@ class AuthService():
         try:
             hod = HOD.query.filter_by(email=email).first()
         except Exception:
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
 
         if not hod:
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Invalid email or password'
             return response, 401
 
         if not hod.verify_password(password):
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Invalid email or password'
             return response, 401
 
@@ -187,11 +187,11 @@ class AuthService():
         token = encode_auth_token(data=encode_data, expiry=datetime.utcnow() + timedelta(days=1))
 
         if not isinstance(token, bytes):
-            response['status'] = False
+            response['success'] = False
             response['message'] = token
             return response, 500
 
-        response['status'] = True
+        response['success'] = True
         response['message'] = 'Logged in successfully'
         response['x-auth-token'] = token.decode()
         return response, 200
@@ -203,19 +203,19 @@ class AuthService():
 
         # Error decoding error
         if isinstance(decoded_payload, str):
-            response['status'] = False
+            response['success'] = False
             response['message'] = decoded_payload
             return response, 401
 
         # Ensure this method logs out only hods
         if decoded_payload.get('hod') is None:
-            response['status'] = True
+            response['success'] = True
             response['message'] = 'Unathorized to perform action'
             return response, 403
 
         # Check revoked token
         if RevokedToken.check(token=auth_token):
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Revoked token. Please log in again'
             return response, 401
 
@@ -224,11 +224,11 @@ class AuthService():
             revoked_token = RevokedToken(token=auth_token)
             revoked_token.save()
         except Exception:
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
 
-        response['status'] = True
+        response['success'] = True
         response['message'] = 'Logged out successfully'
         return response, 200
 
@@ -274,7 +274,7 @@ def student_login_required(func):
         auth_token = request.headers.get('x-auth-token')
         if not auth_token or auth_token is None:
             response = {
-                'status': False,
+                'success': False,
                 'message': 'Please provide a token'
             }
             return response, 401
@@ -283,13 +283,13 @@ def student_login_required(func):
 
         # Error decoding token
         if isinstance(decoded_payload, str):
-            response['status'] = False
+            response['success'] = False
             response['message'] = decoded_payload
             return response, 401
 
         # Check revoked token
         if RevokedToken.check(token=auth_token):
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Revoked token. Please log in again'
             return response, 401
 
@@ -303,7 +303,7 @@ def lecturer_login_required(func):
         auth_token = request.headers.get('x-auth-token')
         if not auth_token or auth_token is None:
             response = {
-                'status': False,
+                'success': False,
                 'message': 'Please provide a token'
             }
             return response, 401
@@ -312,13 +312,13 @@ def lecturer_login_required(func):
 
         # Error decoding token
         if isinstance(decoded_payload, str):
-            response['status'] = False
+            response['success'] = False
             response['message'] = decoded_payload
             return response, 401
 
         # Check revoked token
         if RevokedToken.check(token=auth_token):
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Revoked token. Please log in again'
             return response, 401
 
@@ -332,7 +332,7 @@ def hod_login_required(func):
         auth_token = request.headers.get('x-auth-token')
         if not auth_token or auth_token is None:
             response = {
-                'status': False,
+                'success': False,
                 'message': 'Please provide a token'
             }
             return response, 401
@@ -341,13 +341,13 @@ def hod_login_required(func):
 
         # Error decoding token
         if isinstance(decoded_payload, str):
-            response['status'] = False
+            response['success'] = False
             response['message'] = decoded_payload
             return response, 401
 
         # Check revoked token
         if RevokedToken.check(token=auth_token):
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Revoked token. Please log in again'
             return response, 401
 

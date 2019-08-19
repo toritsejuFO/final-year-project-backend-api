@@ -30,7 +30,7 @@ class HODSignup(Resource):
             new_payload = schema.load(payload).data._asdict()
         except ValidationError as e:
             response = {
-                'status': False,
+                'success': False,
                 'message': e.messages
             }
             return response, 400

@@ -44,7 +44,7 @@ class StudentLogin(Resource):
             new_payload = schema.load(payload).data._asdict()
         except ValidationError as e:
             response = {
-                'status': False,
+                'success': False,
                 'message': e.messages
             }
             return response, 400
@@ -61,7 +61,7 @@ class StudentLogout(Resource):
         auth_token = request.headers.get('x-auth-token')
         if not auth_token or auth_token is None:
             response = {
-                'status': False,
+                'success': False,
                 'message': 'Please provide a token'
             }
             return response, 401
@@ -83,7 +83,7 @@ class LecturerLogin(Resource):
             new_payload = schema.load(payload).data._asdict()
         except ValidationError as e:
             response = {
-                'status': False,
+                'success': False,
                 'message': e.messages
             }
             return response, 400
@@ -100,7 +100,7 @@ class LecturerLogout(Resource):
         auth_token = request.headers.get('x-auth-token')
         if not auth_token or auth_token is None:
             response = {
-                'status': False,
+                'success': False,
                 'message': 'Please provide a token'
             }
             return response, 401
@@ -122,7 +122,7 @@ class HODLogin(Resource):
             new_payload = schema.load(payload).data._asdict()
         except ValidationError as e:
             response = {
-                'status': False,
+                'success': False,
                 'message': e.messages
             }
             return response, 400
@@ -139,7 +139,7 @@ class HODLogout(Resource):
         auth_token = request.headers.get('x-auth-token')
         if not auth_token or auth_token is None:
             response = {
-                'status': False,
+                'success': False,
                 'message': 'Please provide a token'
             }
             return response, 401

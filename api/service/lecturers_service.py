@@ -18,11 +18,11 @@ class LecturerService:
             )
             lecturer.save()
         except Exception:
-            response['status'] = False
+            response['success'] = False
             response['message'] = "Internal Server Error"
             return response, 500
 
-        response['status'] = True
+        response['success'] = True
         response['message'] = 'New Lecturer registered successsfully'
         return response, 201
 
@@ -32,15 +32,15 @@ class LecturerService:
         try:
             lecturer = Lecturer.query.filter_by(email=email).first()
         except:
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
 
         if not lecturer:
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Lecturer Not Found'
             return response, 404
 
-        response['status'] = True
+        response['success'] = True
         response['data'] = lecturer.to_dict
         return response, 200

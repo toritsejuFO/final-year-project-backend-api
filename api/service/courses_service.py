@@ -7,16 +7,16 @@ class CourseService:
         try:
             courses = Course.query.all()
         except:
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
 
         if not courses:
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'No courses found'
             return response, 404
         
-        response['status'] = True
+        response['success'] = True
         response['data'] = [course.to_dict for course in courses]
         return response, 200
 
@@ -28,15 +28,15 @@ class CourseService:
             level_ = Level.query.filter_by(level=level).first()
             courses = Course.query.filter_by(department=department_, level=level_).all()
         except:
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
 
         if not courses:
-            response['status'] = False
+            response['success'] = False
             response['message'] = f'No courses found for "{department}" department in "{level}" level'
             return response, 404
 
-        response['status'] = True
+        response['success'] = True
         response['data'] = [course.to_dict for course in courses]
         return response, 200
