@@ -31,7 +31,7 @@ class LecturerSignup(Resource):
         except ValidationError as e:
             response = {
                 'success': False,
-                'message': e.messages
+                'error': e.messages
             }
             return response, 400
         response, code = LecturerService.create_lecturer(data=new_payload)

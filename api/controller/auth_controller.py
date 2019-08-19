@@ -45,7 +45,7 @@ class StudentLogin(Resource):
         except ValidationError as e:
             response = {
                 'success': False,
-                'message': e.messages
+                'error': e.messages
             }
             return response, 400
 
@@ -84,7 +84,7 @@ class LecturerLogin(Resource):
         except ValidationError as e:
             response = {
                 'success': False,
-                'message': e.messages
+                'error': e.messages
             }
             return response, 400
 
@@ -123,7 +123,7 @@ class HODLogin(Resource):
         except ValidationError as e:
             response = {
                 'success': False,
-                'message': e.messages
+                'error': e.messages
             }
             return response, 400
 

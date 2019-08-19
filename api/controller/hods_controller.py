@@ -31,7 +31,7 @@ class HODSignup(Resource):
         except ValidationError as e:
             response = {
                 'success': False,
-                'message': e.messages
+                'error': e.messages
             }
             return response, 400
         response, code = HODService.create_hod(data=new_payload)
@@ -44,4 +44,26 @@ class Me(Resource):
     def get(self, decoded_payload):
         email = decoded_payload.get('email')
         response, code = HODService.get_me(email=email)
+        return response, code
+
+@hod_api.route('/edit-me')
+class EditMe(Resource):
+    @hod_login_required
+    @hod_api.doc('Update HOD details', security='apiKey')
+    def get(self, decoded_payload):
+        email = decoded_payload.get('email')
+        data = request.json
+        schema = EditMeSchema(strict)
+        payload = hod_api.payload or data
+
+        try:
+            new_payload = schema.load(payload).data._asdict()
+        except ValidationError as e:
+            response = {
+                'success': False,
+                'error': e.messages
+            }
+            return response, 400
+
+        respoonse, code = HODService.edit_me(new_payload)
         return response, code

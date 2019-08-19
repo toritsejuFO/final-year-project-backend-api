@@ -46,7 +46,7 @@ class Signup(Resource):
         except ValidationError as e:
             response = {
                 'success': False,
-                'message': e.messages
+                'error': e.messages
             }
             return response, 400
         response, code = StudentService.create_student(data=new_payload)
@@ -78,7 +78,7 @@ class EditMe(Resource):
         except ValidationError as e:
             response = {
                 'success': False,
-                'message': e.messages
+                'error': e.messages
             }
             return response, 400
         response, code = StudentService.edit_me(reg_no=reg_no, data=new_payload)
