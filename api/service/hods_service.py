@@ -44,3 +44,33 @@ class HODService:
         response['success'] = True
         response['data'] = hod.to_dict
         return response, 200
+
+    @staticmethod
+    def edit_me(email, data):
+        response = {}
+
+        try:
+            hod = HOD.query.filter_by(email=email).first()
+        except Exception:
+            response['success'] = False
+            response['message'] = 'Internal Server Error'
+            return response, 500
+
+        if not hod:
+            response['success'] = False
+            response['message'] = 'HOD not found'
+            return response, 404
+
+        try:
+            hod.name = data['name']
+            hod.email = data['email']
+            hod.password = data['password']
+            hod.save()
+        except Exception:
+            response['success'] = False
+            response['message'] = 'Internal Server Error'
+            return response, 500
+
+        response['success'] = True
+        response['message'] = 'Details updated successfully'
+        return response, 200
