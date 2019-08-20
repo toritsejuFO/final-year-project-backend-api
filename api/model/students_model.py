@@ -43,7 +43,7 @@ class Student(db.Model):
             'level': self.get_level,
             'department': self.get_department,
             'school': self.get_school,
-            'fingerprint': self.fingerprint_template,
+            'fingerprint': True if self.fingerprint_template else False,
             'graduated': self.graduated,
             'reg_completed': self.reg_complete,
             'registered_on': arrow.get(self.created_at).for_json(),
