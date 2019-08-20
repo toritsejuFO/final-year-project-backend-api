@@ -32,7 +32,9 @@ class AuthService():
             return response, 401
 
         encode_data = {
-            'reg_no': student.reg_no
+            'reg_no': student.reg_no,
+            'student': True,
+            'entity': 'student'
         }
         token = encode_auth_token(data=encode_data, expiry=datetime.utcnow() + timedelta(days=1))
 
@@ -107,7 +109,8 @@ class AuthService():
 
         encode_data = {
             'email': lecturer.email,
-            'lecturer': True
+            'lecturer': True,
+            'entity': 'lecturer'
         }
         token = encode_auth_token(data=encode_data, expiry=datetime.utcnow() + timedelta(days=1))
 
@@ -182,7 +185,8 @@ class AuthService():
 
         encode_data = {
             'email': hod.email,
-            'hod': True
+            'hod': True,
+            'entity': 'hod'
         }
         token = encode_auth_token(data=encode_data, expiry=datetime.utcnow() + timedelta(days=1))
 
@@ -230,6 +234,25 @@ class AuthService():
 
         response['success'] = True
         response['message'] = 'Logged out successfully'
+        return response, 200
+
+    @staticmethod
+    def verify(auth_token):
+        response = {}
+        decoded_payload = decode_auth_token(auth_token=auth_token)
+
+        if isinstance(decoded_payload, str):
+            response['success'] = False
+            response['message'] = decoded_payload
+            return response, 401
+
+        if RevokedToken.check(token=auth_token):
+            response['success'] = False
+            response['message'] = 'Token revoked'
+            return response, 403
+
+        response['success'] = True
+        response['entity'] = decoded_payload['entity']
         return response, 200
 
 
