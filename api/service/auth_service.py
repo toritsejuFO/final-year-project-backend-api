@@ -67,7 +67,7 @@ class AuthService():
         if RevokedToken.check(token=auth_token):
             response['success'] = False
             response['message'] = 'Revoked token. Please log in again'
-            return response, 401
+            return response, 403
 
         # Mark token as revoked and logout student
         try:
@@ -142,7 +142,7 @@ class AuthService():
         if RevokedToken.check(token=auth_token):
             response['success'] = False
             response['message'] = 'Revoked token. Please log in again'
-            return response, 401
+            return response, 403
 
         # Mark token as revoked and logout student
         try:
@@ -217,7 +217,7 @@ class AuthService():
         if RevokedToken.check(token=auth_token):
             response['success'] = False
             response['message'] = 'Revoked token. Please log in again'
-            return response, 401
+            return response, 403
 
         # Mark token as revoked and logout student
         try:
@@ -291,7 +291,7 @@ def student_login_required(func):
         if RevokedToken.check(token=auth_token):
             response['success'] = False
             response['message'] = 'Revoked token. Please log in again'
-            return response, 401
+            return response, 403
 
         return func(*args, **kwargs, decoded_payload=decoded_payload)
     return wrapper
@@ -320,7 +320,7 @@ def lecturer_login_required(func):
         if RevokedToken.check(token=auth_token):
             response['success'] = False
             response['message'] = 'Revoked token. Please log in again'
-            return response, 401
+            return response, 403
 
         return func(*args, **kwargs, decoded_payload=decoded_payload)
     return wrapper
@@ -349,7 +349,7 @@ def hod_login_required(func):
         if RevokedToken.check(token=auth_token):
             response['success'] = False
             response['message'] = 'Revoked token. Please log in again'
-            return response, 401
+            return response, 403
 
         return func(*args, **kwargs, decoded_payload=decoded_payload)
     return wrapper
