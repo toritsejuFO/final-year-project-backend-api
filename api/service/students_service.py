@@ -7,16 +7,16 @@ class StudentService():
         try:
             students = Student.query.all()
         except:
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
 
         if not students:
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Students Not Found'
             return response, 404
 
-        response['status'] = True
+        response['success'] = True
         response['data'] = [student.to_dict for student in students]
         return response, 200
 
@@ -27,11 +27,11 @@ class StudentService():
             student = Student(**data)
             student.save()
         except:
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
 
-        response['status'] = True
+        response['success'] = True
         response['message'] = 'New student successfully registered'
         return response, 201
 
@@ -41,16 +41,16 @@ class StudentService():
         try:
             student = Student.query.filter_by(reg_no=reg_no).first()
         except:
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
 
         if not student:
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Student Not Found'
             return response, 404
 
-        response['status'] = True
+        response['success'] = True
         response['data'] = student.to_dict
         return response, 200
 
@@ -62,17 +62,17 @@ class StudentService():
         try:
             student = Student.query.filter_by(reg_no=reg_no).first()
         except:
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
 
         if not student:
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Student Not Found'
             return response, 404
 
         if student.reg_complete:
-            response['status'] = False
+            response['success'] = False
             response['message'] = "You cannot update your details anymore"
             return response, 403
 
@@ -82,10 +82,10 @@ class StudentService():
             student.reg_complete = True
             student.save()
         except:
-            response['status'] = False
+            response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
 
-        response['status'] = True
+        response['success'] = True
         response['message'] = 'Details updated successfully'
         return response, 200

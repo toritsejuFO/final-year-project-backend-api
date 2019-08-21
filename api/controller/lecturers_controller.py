@@ -30,8 +30,8 @@ class LecturerSignup(Resource):
             new_payload = schema.load(payload).data._asdict()
         except ValidationError as e:
             response = {
-                'status': False,
-                'message': e.messages
+                'success': False,
+                'error': e.messages
             }
             return response, 400
         response, code = LecturerService.create_lecturer(data=new_payload)

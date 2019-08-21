@@ -29,6 +29,8 @@ hod_login = hod_auth_api.model('HOD login', {
     'password': fields.String(required=True, description='HOD\'s password'),
 })
 
+auth_verification_api = Namespace('auth', description='API endpoint for verifying auth token')
+
 
 @student_auth_api.route('/signin')
 class StudentLogin(Resource):
@@ -44,8 +46,8 @@ class StudentLogin(Resource):
             new_payload = schema.load(payload).data._asdict()
         except ValidationError as e:
             response = {
-                'status': False,
-                'message': e.messages
+                'success': False,
+                'error': e.messages
             }
             return response, 400
 
@@ -61,7 +63,7 @@ class StudentLogout(Resource):
         auth_token = request.headers.get('x-auth-token')
         if not auth_token or auth_token is None:
             response = {
-                'status': False,
+                'success': False,
                 'message': 'Please provide a token'
             }
             return response, 401
@@ -83,8 +85,8 @@ class LecturerLogin(Resource):
             new_payload = schema.load(payload).data._asdict()
         except ValidationError as e:
             response = {
-                'status': False,
-                'message': e.messages
+                'success': False,
+                'error': e.messages
             }
             return response, 400
 
@@ -100,7 +102,7 @@ class LecturerLogout(Resource):
         auth_token = request.headers.get('x-auth-token')
         if not auth_token or auth_token is None:
             response = {
-                'status': False,
+                'success': False,
                 'message': 'Please provide a token'
             }
             return response, 401
@@ -122,8 +124,8 @@ class HODLogin(Resource):
             new_payload = schema.load(payload).data._asdict()
         except ValidationError as e:
             response = {
-                'status': False,
-                'message': e.messages
+                'success': False,
+                'error': e.messages
             }
             return response, 400
 
@@ -139,9 +141,29 @@ class HODLogout(Resource):
         auth_token = request.headers.get('x-auth-token')
         if not auth_token or auth_token is None:
             response = {
-                'status': False,
+                'success': False,
                 'message': 'Please provide a token'
             }
             return response, 401
         response, code = AuthService.logout_hod(auth_token=auth_token)
+        return response, code
+
+@auth_verification_api.route('/verify')
+class AuthTokenVerification(Resource):
+    @auth_verification_api.doc('Verify Auth Token', security='apiKey')
+    @auth_verification_api.response(200, 'Valid Token')
+    @auth_verification_api.response(401, 'Token Not Provided')
+    @auth_verification_api.response(401, 'Invalid Token')
+    @auth_verification_api.response(401, 'Expired Token')
+    @auth_verification_api.response(403, 'Revoked Token')
+    def get(self):
+        auth_token = request.headers.get('x-auth-token')
+        if not auth_token or auth_token is None:
+            response = {
+                'success': False,
+                'message': 'Please provide a token'
+            }
+            return response, 401
+
+        response, code = AuthService.verify(auth_token=auth_token)
         return response, code

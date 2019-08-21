@@ -30,14 +30,14 @@ class EditMeSchema(Schema):
     def validate_level(self, value):
         levels = ['100', '200', '300', '400', '500']
         if not value:
-            raise ValidationError('level cannot be empty')
+            raise ValidationError('Level cannot be empty')
         if value not in levels:
             raise ValidationError(f'Invalid level. Must be in {levels}')
 
     @validates('department')
     def validate_department(self, value):
         if not value:
-            raise ValidationError('department cannot be empty')
+            raise ValidationError('Department cannot be empty')
         try:
             dept = Department.query.filter_by(code=value.upper()).first()
         except:
@@ -62,34 +62,34 @@ class NewStudentSchema(Schema):
     def validate_firstname(self, value):
         max_len = 50
         if not value:
-            raise ValidationError('firstname cannot be empty')
+            raise ValidationError('First name cannot be empty')
         if len(value) > max_len:
-            raise ValidationError(f'firstname cannot exceed {max_len} characters')
+            raise ValidationError(f'First Name cannot exceed {max_len} characters')
 
     @validates('lastname')
     def validate_lastname(self, value):
         max_len = 50
         if not value:
-            raise ValidationError('lastname cannot be empty')
+            raise ValidationError('Last name cannot be empty')
         if len(value) > max_len:
-            raise ValidationError(f'lastname cannot exceed {max_len} characters')
+            raise ValidationError(f'Last name cannot exceed {max_len} characters')
 
     @validates('othername')
     def validate_othername(self, value):
         max_len = 50
         if not value:
-            raise ValidationError('othername cannot be empty')
+            raise ValidationError('Other name cannot be empty')
         if len(value) > max_len:
-            raise ValidationError(f'othername cannot exceed {max_len} characters')
+            raise ValidationError(f'Other name cannot exceed {max_len} characters')
 
     @validates('reg_no')
     def validate_reg_no(self, value):
         max_len = 11
         student = Student.query.filter_by(reg_no=value).first()
         if not value:
-            raise ValidationError('reg_no cannot be empty')
+            raise ValidationError('Reg number cannot be empty')
         if len(value) > max_len or len(value) < max_len:
-            raise ValidationError(f'reg number must be exactly {max_len} characters')
+            raise ValidationError(f'Reg number must be exactly {max_len} characters')
         if student:
             raise ValidationError('Student with this reg number already exists')
 
@@ -98,13 +98,13 @@ class NewStudentSchema(Schema):
         max_len = 128
         student = Student.query.filter_by(email=value).first()
         if not value:
-            raise ValidationError('email cannot be empty')
+            raise ValidationError('Email cannot be empty')
         if len(value) > max_len:
-            raise ValidationError(f'email cannot exceed {max_len} characters')
+            raise ValidationError(f'Email cannot exceed {max_len} characters')
         if student:
             raise ValidationError('Student with this email already exists')
 
     @validates('password')
     def validate_password(self, value):
         if not value:
-            raise ValidationError('password cannot be empty')
+            raise ValidationError('Password cannot be empty')

@@ -45,8 +45,8 @@ class Signup(Resource):
             new_payload = schema.load(payload).data._asdict()
         except ValidationError as e:
             response = {
-                'status': False,
-                'message': e.messages
+                'success': False,
+                'error': e.messages
             }
             return response, 400
         response, code = StudentService.create_student(data=new_payload)
@@ -77,8 +77,8 @@ class EditMe(Resource):
             new_payload = schema.load(payload).data._asdict()
         except ValidationError as e:
             response = {
-                'status': False,
-                'message': e.messages
+                'success': False,
+                'error': e.messages
             }
             return response, 400
         response, code = StudentService.edit_me(reg_no=reg_no, data=new_payload)

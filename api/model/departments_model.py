@@ -18,6 +18,16 @@ class Department(db.Model):
         self.code = code
         self.school = School.query.filter_by(code=school_code).first()
 
+    @property
+    def to_dict(self):
+        json_department = {
+            'code': self.code,
+            'fullname': self.name,
+            'school_code': self.school.code,
+            'school_fullname': self.school.name
+        }
+        return json_department
+
     def save(self):
         db.session.add(self)
         db.session.commit()
