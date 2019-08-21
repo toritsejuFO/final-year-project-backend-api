@@ -48,7 +48,6 @@ class HODService:
     @staticmethod
     def edit_me(email, data):
         response = {}
-
         try:
             hod = HOD.query.filter_by(email=email).first()
         except Exception:
@@ -74,3 +73,46 @@ class HODService:
         response['success'] = True
         response['message'] = 'Details updated successfully'
         return response, 200
+
+    @staticmethod
+    def get_lecturers(email):
+        response = {}
+        try:
+            hod = HOD.query.filter_by(email=email).first()
+        except Exception:
+            response['success'] = False
+            response['message'] = 'Internal Server Error'
+            return response, 500
+
+        if not hod:
+            response['success'] = False
+            response['message'] = 'HOD not found'
+            return response, 404
+
+        response['success'] = True
+        response['data'] = [lecturer.to_dict for lecturer in hod.department.lecturers]
+        return response, 200
+
+    @staticmethod
+    def get_courses(email, semester):
+        response = {}
+        try:
+            hod = HOD.query.filter_by(email=email).first()
+        except Exception:
+            response['success'] = False
+            response['message'] = 'Internal Server Error'
+            return response, 500
+
+        if not hod:
+            response['success'] = False
+            response['message'] = 'HOD not found'
+            return response, 404
+
+        # Filter courses in department by semester
+        courses = list(filter(lambda c: c.semester.semester == semester, hod.department.courses))
+
+        response['success'] = True
+        response['data'] = [course.to_dict for course in courses]
+        return response, 200
+
+

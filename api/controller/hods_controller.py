@@ -74,3 +74,21 @@ class EditMe(Resource):
 
         response, code = HODService.edit_me(email=email, data=new_payload)
         return response, code
+
+@hod_api.route('/lecturers')
+class LecturerList(Resource):
+    @hod_login_required
+    @hod_api.doc('Get All Lecturers in HOD department', security='apiKey')
+    def get(self, decoded_payload):
+        email = decoded_payload.get('email')
+        response, code = HODService.get_lecturers(email=email)
+        return response, code
+
+@hod_api.route('/courses/<string:semester>')
+class CourseList(Resource):
+    @hod_login_required
+    @hod_api.doc('Get All Courses in HOD department per semester', security='apiKey')
+    def get(self, semester, decoded_payload):
+        email = decoded_payload.get('email')
+        response, code = HODService.get_courses(email=email, semester=semester)
+        return response, code
