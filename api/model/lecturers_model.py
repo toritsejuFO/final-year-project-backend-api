@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 import arrow
@@ -5,6 +6,15 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from api import db
 from api.model import Department
+from api import select_table_name
+
+session = os.environ.get('CURRENT_ASSIGNED_COURSES_SESSION')
+semester = os.environ.get('CURRENT_ASSIGNED_COURSES_SEMESTER')
+table_name = select_table_name(f'ASSIGNED_COURSES_{semester}_{session}')
+
+assigned_courses = db.Table(table_name,
+    db.Column('lecturer_id', db.Integer, db.ForeignKey('lecturers.id'), primary_key=True),
+    db.Column('course_id', db.Integer, db.ForeignKey('courses.id'), primary_key=True))
 
 
 class Lecturer(db.Model):
@@ -15,12 +25,15 @@ class Lecturer(db.Model):
     email = db.Column(db.String(128), index=True)
     department_id = db.Column(db.Integer, db.ForeignKey('departments.id'))
     password_hash = db.Column(db.String(128))
+    assigned_courses = db.relationship('Course', secondary=assigned_courses,
+        backref=db.backref('lecturers_assigned', lazy='dynamic'), lazy='dynamic')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __init__(self, name, email, department_code, password):
         self.name = name.title()
         self.email = email
-        self.department = Department.query.filter_by(code=department_code).first()
+        self.department = Department.query.filter_by(
+            code=department_code).first()
         self.password = password
 
     @property
