@@ -9,7 +9,7 @@ from flask_migrate import Migrate
 
 from api import create_app, db
 from logger import request_logger
-from api.model import Student, Level, School, Department, Course, Semester
+from api.model import Student, Level, School, Department, Course, Semester, HOD, RevokedToken
 
 load_dotenv()
 
@@ -31,7 +31,9 @@ def make_shell_context():
         'School': School, 
         'Department': Department, 
         'Course': Course,
-        'Semester': Semester
+        'Semester': Semester,
+        'HOD': HOD,
+        'RevokedToken': RevokedToken
     }
 
 @app.cli.command()
