@@ -1,4 +1,5 @@
-from api.model import HOD
+from api import db
+from api.model import HOD, Lecturer, Course
 
 class HODService:
     @staticmethod
@@ -114,5 +115,61 @@ class HODService:
         response['success'] = True
         response['data'] = [course.to_dict for course in courses]
         return response, 200
+    @staticmethod
+    def assign_courses(email, data):
+        response = {}
+        try:
+            hod = HOD.query.filter_by(email=email).first()
+        except Exception:
+            response['success'] = False
+            response['message'] = 'Internal Server Error'
+            return response, 500
 
+        if not hod:
+            response['success'] = False
+            response['message'] = 'HOD not found'
+            return response, 404
 
+        try:
+            for datum in data:
+                lecturer_email = datum['email']
+                course_codes = datum['courses']
+                lecturer = Lecturer.query.filter_by(email=lecturer_email).first()
+                for course_code in course_codes:
+                    course = Course.query.filter_by(code=course_code).first()
+                    lecturer.assign_course(course)
+                db.session.commit()
+        except Exception:
+            response['success'] = False
+            response['message'] = 'Internal Server Error'
+            return response, 500
+
+        response['success'] = True
+        response['message'] = 'Courses assigned successfully'
+        return response, 200
+
+    @staticmethod
+    def get_assigned(email, semester):
+        response = {}
+        try:
+            hod = HOD.query.filter_by(email=email).first()
+        except Exception:
+            response['success'] = False
+            response['message'] = 'Internal Server Error'
+            return response, 500
+
+        if not hod:
+            response['success'] = False
+            response['message'] = 'HOD not found'
+            return response, 404
+
+        # Filter courses in department by semester
+        courses = list(filter(lambda c: c.semester.semester == semester, hod.department.courses))
+        assigned_courses = [{
+            'course': course.to_dict,
+            'lecturers': [lecturer.to_dict for lecturer in course.lecturers_assigned.all()]
+        } for course in courses]
+
+        response['success'] = False
+        response['data'] = assigned_courses
+        return response, 200

@@ -13,8 +13,11 @@ semester = os.environ.get('CURRENT_ASSIGNED_COURSES_SEMESTER')
 table_name = select_table_name(f'ASSIGNED_COURSES_{semester}_{session}')
 
 assigned_courses = db.Table(table_name,
-    db.Column('lecturer_id', db.Integer, db.ForeignKey('lecturers.id'), primary_key=True),
-    db.Column('course_id', db.Integer, db.ForeignKey('courses.id'), primary_key=True))
+                            db.Column('lecturer_id', db.Integer, db.ForeignKey(
+                                'lecturers.id'), primary_key=True),
+                            db.Column('course_id', db.Integer, db.ForeignKey(
+                                'courses.id'), primary_key=True)
+                            )
 
 
 class Lecturer(db.Model):
@@ -26,7 +29,7 @@ class Lecturer(db.Model):
     department_id = db.Column(db.Integer, db.ForeignKey('departments.id'))
     password_hash = db.Column(db.String(128))
     assigned_courses = db.relationship('Course', secondary=assigned_courses,
-        backref=db.backref('lecturers_assigned', lazy='dynamic'), lazy='dynamic')
+                                       backref=db.backref('lecturers_assigned', lazy='dynamic'), lazy='dynamic')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __init__(self, name, email, department_code, password):
@@ -47,6 +50,13 @@ class Lecturer(db.Model):
             'registered_since': arrow.get(self.created_at).humanize(),
         }
         return json_lecturer
+
+    def assign_course(self, course):
+        if not self.is_assigned(course):
+            self.assigned_courses.append(course)
+
+    def is_assigned(self, course):
+        return self.assigned_courses.filter(assigned_courses.c.course_id == course.id).count() > 0
 
     @property
     def password(self):

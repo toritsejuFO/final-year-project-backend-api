@@ -92,3 +92,23 @@ class CourseList(Resource):
         email = decoded_payload.get('email')
         response, code = HODService.get_courses(email=email, semester=semester)
         return response, code
+
+@hod_api.route('/assign/lecturers')
+class AssignCourses(Resource):
+    @hod_login_required
+    @hod_api.doc('Assign Courses to Lecturers', security='apiKey')
+    def post(self, decoded_payload):
+        email = decoded_payload.get('email')
+        data = request.json
+        payload = hod_api.payload or data
+        response, code = HODService.assign_courses(email=email, data=payload)
+        return response, code
+
+@hod_api.route('/assigned/<string:semester>')
+class Assigned(Resource):
+    @hod_login_required
+    @hod_api.doc('Get All Courses Assigned per semester', security='apiKey')
+    def get(self, semester, decoded_payload):
+        email = decoded_payload.get('email')
+        response, code = HODService.get_assigned(email=email, semester=semester)
+        return response, code
