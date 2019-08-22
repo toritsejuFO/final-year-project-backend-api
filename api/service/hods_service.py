@@ -63,8 +63,8 @@ class HODService:
 
         try:
             hod.name = data['name']
-            hod.email = data['email']
-            hod.password = data['password']
+            if data['password'] != '':
+                hod.password = data['password']
             hod.save()
         except Exception:
             response['success'] = False
