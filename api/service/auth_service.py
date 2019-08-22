@@ -73,8 +73,7 @@ class AuthService():
 
         # Mark token as revoked and logout student
         try:
-            revoked_token = RevokedToken(token=auth_token)
-            revoked_token.save()
+            RevokedToken(token=auth_token).save()
         except Exception:
             response['success'] = False
             response['message'] = 'Internal Server Error'
@@ -149,8 +148,7 @@ class AuthService():
 
         # Mark token as revoked and logout student
         try:
-            revoked_token = RevokedToken(token=auth_token)
-            revoked_token.save()
+            RevokedToken(token=auth_token).save()
         except Exception:
             response['success'] = False
             response['message'] = 'Internal Server Error'
@@ -225,8 +223,7 @@ class AuthService():
 
         # Mark token as revoked and logout student
         try:
-            revoked_token = RevokedToken(token=auth_token)
-            revoked_token.save()
+            RevokedToken(token=auth_token).save()
         except Exception:
             response['success'] = False
             response['message'] = 'Internal Server Error'

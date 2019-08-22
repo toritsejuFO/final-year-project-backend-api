@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_restplus import Api
@@ -47,3 +49,6 @@ def create_app(config_name):
     api.add_namespace(auth_verification_ns, path='/auth')
 
     return app
+
+def select_table_name(table):
+    return os.environ.get(table)

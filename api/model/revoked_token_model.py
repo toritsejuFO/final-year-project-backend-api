@@ -14,11 +14,7 @@ class RevokedToken(db.Model):
 
     @staticmethod
     def check(token):
-        token = RevokedToken.query.filter_by(token=token).first()
-        if token:
-            return True
-        else:
-            return False
+        return RevokedToken.query.filter_by(token=token).count() > 0
 
     def save(self):
         db.session.add(self)
