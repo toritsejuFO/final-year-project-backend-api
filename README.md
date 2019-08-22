@@ -16,8 +16,9 @@
 
 ## Initial DB setup
 Create a database that matches the one in your .env file.
-Run the commands below that in order to populate DB
-
+Run the commands below that in order to create and populate DB
+* `flask db init`
+* `flask db upgrade`
 * `flask semester`
 * `flask level`
 * `flask schools`
@@ -31,3 +32,6 @@ Run the commands below that in order to populate DB
 * `./utils/create_postman_collections.sh`
 
 This will create a ***postman_collection*** file that you can now import to postman app to test the API
+
+## Link to project progress tracker
+[View project on pivotal tracker](https://www.pivotaltracker.com/n/projects/2380261)
