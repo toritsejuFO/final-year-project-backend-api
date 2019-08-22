@@ -41,6 +41,10 @@ class LecturerService:
             response['message'] = 'Lecturer Not Found'
             return response, 404
 
+        data = {
+            **lecturer.to_dict,
+            'assigned_courses': [course.to_dict for course in lecturer.assigned_courses.all()]
+        }
         response['success'] = True
-        response['data'] = lecturer.to_dict
+        response['data'] = data
         return response, 200
