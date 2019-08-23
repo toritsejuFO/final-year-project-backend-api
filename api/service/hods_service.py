@@ -115,6 +115,7 @@ class HODService:
         response['success'] = True
         response['data'] = [course.to_dict for course in courses]
         return response, 200
+
     @staticmethod
     def assign_courses(email, data):
         response = {}
