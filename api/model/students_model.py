@@ -1,10 +1,22 @@
-from datetime import datetime, timedelta
+import os
+from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 
-import  arrow
+import arrow
 
-from api import db
+from api import db, select_table_name
 from api.model import Level
+
+session = os.environ.get('CURRENT_REGISTERED_COURSES_SESSION')
+semester = os.environ.get('CURRENT_REGISTERED_COURSES_SEMESTER')
+table_name = select_table_name(f'REGISTERED_COURSES_{semester}_{session}')
+
+registered_courses = db.Table(table_name,
+                              db.Column('student_id', db.Integer, db.ForeignKey(
+                                  'students.id'), primary_key=True),
+                              db.Column('course_id', db.Integer, db.ForeignKey(
+                                  'courses.id'), primary_key=True)
+                              )
 
 
 class Student(db.Model):
@@ -19,10 +31,14 @@ class Student(db.Model):
     level_id = db.Column(db.Integer, db.ForeignKey('levels.id'))
     department_id = db.Column(db.Integer, db.ForeignKey('departments.id'))
     password_hash = db.Column(db.String(128))
-    fingerprint_template = db.Column(db.String(256), unique=True, index=True, default=None)
+    fingerprint_template = db.Column(
+        db.String(256), unique=True, index=True, default=None)
     graduated = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     reg_complete = db.Column(db.Boolean, default=False)
+    registered_courses = db.relationship('Course', secondary=registered_courses, backref=db.backref(
+        'students_registered', lazy='dynamic'), lazy='dynamic')
+    has_registered_course = db.Column(db.Boolean, default=False)
 
     def __init__(self, firstname=None, lastname=None, othername=None, reg_no=None, email=None, password=None):
         self.firstname = firstname.title()
@@ -48,8 +64,16 @@ class Student(db.Model):
             'reg_completed': self.reg_complete,
             'registered_on': arrow.get(self.created_at).for_json(),
             'registered_since': arrow.get(self.created_at).humanize(),
+            'has_registered_courses': self.has_registered_course
         }
         return json_student
+
+    def register_course(self, course):
+        if not self.is_registered(course):
+            self.registered_courses.append(course)
+
+    def is_registered(self, course):
+        return self.registered_courses.filter(registered_courses.c.course_id == course.id).count() > 0
 
     @property
     def get_level(self):
