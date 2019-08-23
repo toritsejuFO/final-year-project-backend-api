@@ -1,4 +1,6 @@
-from api.model import Student, Department, Level
+from api import db
+from api.model import Student, Department, Level, Course
+
 
 class StudentService():
     @staticmethod
@@ -88,4 +90,85 @@ class StudentService():
 
         response['success'] = True
         response['message'] = 'Details updated successfully'
+        return response, 200
+
+    @staticmethod
+    def get_me_courses(reg_no, semester):
+        response = {}
+        try:
+            student = Student.query.filter_by(reg_no=reg_no).first()
+        except:
+            response['success'] = False
+            response['message'] = 'Internal Server Error'
+            return response, 500
+
+        if not student:
+            response['success'] = False
+            response['message'] = 'Student Not Found'
+            return response, 404
+
+        # Select courses based on student's level and current semester
+        courses = list(filter(
+            lambda c: c.semester.semester == semester and c.level.level == student.level.level,
+            student.department.courses))
+
+        response['success'] = True
+        response['data'] = [course.to_dict for course in courses]
+        return response, 200
+
+    @staticmethod
+    def register_courses(reg_no, data):
+        response = {}
+        try:
+            student = Student.query.filter_by(reg_no=reg_no).first()
+        except:
+            response['success'] = False
+            response['message'] = 'Internal Server Error'
+            return response, 500
+
+        if not student:
+            response['success'] = False
+            response['message'] = 'Student Not Found'
+            return response, 404
+
+        if student.has_registered_course:
+            response['success'] = False
+            response['message'] = 'Registration can only be done once'
+            return response, 403
+
+        try:
+            course_codes = data['courses']
+            for course_code in course_codes:
+                course = Course.query.filter_by(code=course_code).first()
+                student.register_course(course)
+            db.session.commit()
+            student.has_registered_course = True
+            student.save()
+        except Exception as e:
+            print(repr(e))
+            response['success'] = False
+            response['message'] = 'Internal Server Error'
+            return response, 500
+
+        response['success'] = True
+        response['message'] = 'Courses registered successfully'
+        return response, 200
+
+    @staticmethod
+    def get_registered_courses(reg_no):
+        response = {}
+        try:
+            student = Student.query.filter_by(reg_no=reg_no).first()
+        except Exception:
+            response['success'] = False
+            response['message'] = 'Internal Server Error'
+            return response, 500
+
+        if not student:
+            response['success'] = False
+            response['message'] = 'Student Not Found'
+            return response, 404
+
+        response['success'] = True
+        response['data'] = [course.to_dict for course in student.registered_courses.all()]
         return response, 200

@@ -22,6 +22,10 @@ edit_me = student_api.model('Student Update', {
     'department': fields.String(required=True, description='Student\'s department'),
 })
 
+courses_registration = student_api.model('Courses Registration', {
+    'courses': fields.List(fields.String, required=True, description='A Course')
+})
+
 
 @student_api.route('')
 class StudentList(Resource):
@@ -62,6 +66,7 @@ class Me(Resource):
         response, code = StudentService.get_me(reg_no=reg_no)
         return response, code
 
+
 @student_api.route('/edit-me')
 class EditMe(Resource):
     @student_login_required
@@ -81,5 +86,42 @@ class EditMe(Resource):
                 'error': e.messages
             }
             return response, 400
-        response, code = StudentService.edit_me(reg_no=reg_no, data=new_payload)
+        response, code = StudentService.edit_me(
+            reg_no=reg_no, data=new_payload)
+        return response, code
+
+
+@student_api.route('/me/courses/<string:semester>')
+class StudentCourses(Resource):
+    @student_login_required
+    @student_api.doc('View student courses per semester', security='apiKey')
+    def get(self, semester, decoded_payload):
+        reg_no = decoded_payload.get('reg_no')
+        response, code = StudentService.get_me_courses(
+            reg_no=reg_no, semester=semester)
+        return response, code
+
+
+@student_api.route('/me/register/courses')
+class RegisterCourses(Resource):
+    @student_login_required
+    @student_api.expect(courses_registration)
+    @student_api.doc('Register Student Courses', security='apiKey')
+    def post(self, decoded_payload):
+        reg_no = decoded_payload.get('reg_no')
+        data = request.json
+        print(data['courses'])
+        payload = student_api.payload or data
+        response, code = StudentService.register_courses(
+            reg_no=reg_no, data=payload)
+        return response, code
+
+
+@student_api.route('/me/registered/courses')
+class RegisteredCourses(Resource):
+    @student_login_required
+    @student_api.doc('View Student\'s Registered Courses', security='apiKey')
+    def get(self, decoded_payload):
+        reg_no = decoded_payload.get('reg_no')
+        response, code = StudentService.get_registered_courses(reg_no=reg_no)
         return response, code
