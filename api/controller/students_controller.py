@@ -110,7 +110,6 @@ class RegisterCourses(Resource):
     def post(self, decoded_payload):
         reg_no = decoded_payload.get('reg_no')
         data = request.json
-        print(data['courses'])
         payload = student_api.payload or data
         response, code = StudentService.register_courses(
             reg_no=reg_no, data=payload)
