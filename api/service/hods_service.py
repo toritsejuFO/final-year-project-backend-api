@@ -131,6 +131,11 @@ class HODService:
             response['message'] = 'HOD not found'
             return response, 404
 
+        if hod.has_assigned_courses:
+            response['success'] = False
+            response['message'] = 'Unable to assign courses more than once. Contact Admin'
+            return response, 423
+
         try:
             for datum in data:
                 lecturer_email = datum['email']
