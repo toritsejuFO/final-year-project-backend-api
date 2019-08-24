@@ -63,8 +63,8 @@ class HODService:
 
         try:
             hod.name = data['name']
-            hod.email = data['email']
-            hod.password = data['password']
+            if data['password'] != '':
+                hod.password = data['password']
             hod.save()
         except Exception:
             response['success'] = False
@@ -115,6 +115,7 @@ class HODService:
         response['success'] = True
         response['data'] = [course.to_dict for course in courses]
         return response, 200
+
     @staticmethod
     def assign_courses(email, data):
         response = {}

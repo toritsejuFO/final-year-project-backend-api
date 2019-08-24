@@ -17,7 +17,6 @@ hod_reg = hod_api.model('HOD Registration', {
 
 edit_me = hod_api.model('HOD Update', {
     'name': fields.String(required=True, description='HOD\'s name'),
-    'email': fields.String(required=True, description='HOD\'s email'),
     'password': fields.String(required=True, description='HOD\'s password'),
 })
 

@@ -7,7 +7,7 @@ if not os.path.exists('logs'):
 
 
 file_handler = RotatingFileHandler(
-    'logs/api.log', maxBytes=10240, backupCount=10)
+    'logs/api.log', maxBytes=1048576, backupCount=10)
 file_handler.setLevel(logging.ERROR)
 file_handler.setFormatter(logging.Formatter(
     '[%(asctime)s] %(levelname)s: %(message)s - [%(pathname)s:%(lineno)s]'))
@@ -15,7 +15,7 @@ file_handler.setFormatter(logging.Formatter(
 # To log request only after every request
 request_logger = logging.getLogger('request_logger')
 request_handler = RotatingFileHandler(
-    'logs/request.log', maxBytes=10240, backupCount=10)
+    'logs/request.log', maxBytes=1048576, backupCount=5)
 request_handler.setLevel(logging.INFO)
 request_handler.setFormatter(logging.Formatter('[%(asctime)s] - %(message)s'))
 request_logger.addHandler(request_handler)
