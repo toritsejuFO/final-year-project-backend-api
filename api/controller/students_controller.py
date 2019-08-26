@@ -43,10 +43,10 @@ class Signup(Resource):
     def post(self):
         data = request.json
         payload = student_api.payload or data
-        schema = NewStudentSchema(strict=True)
+        schema = NewStudentSchema()
 
         try:
-            new_payload = schema.load(payload).data._asdict()
+            new_payload = schema.load(payload)._asdict()
         except ValidationError as e:
             response = {
                 'success': False,
@@ -76,10 +76,10 @@ class EditMe(Resource):
         reg_no = decoded_payload.get('reg_no')
         data = request.json
         payload = student_api.payload or data
-        schema = EditMeSchema(strict=True)
+        schema = EditMeSchema()
 
         try:
-            new_payload = schema.load(payload).data._asdict()
+            new_payload = schema.load(payload)._asdict()
         except ValidationError as e:
             response = {
                 'success': False,

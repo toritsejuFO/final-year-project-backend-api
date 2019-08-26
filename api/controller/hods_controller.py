@@ -38,10 +38,10 @@ class HODSignup(Resource):
     def post(self):
         data = request.json
         payload = hod_api.payload or data
-        schema = NewHODSchema(strict=True)
+        schema = NewHODSchema()
 
         try:
-            new_payload = schema.load(payload).data._asdict()
+            new_payload = schema.load(payload)._asdict()
         except ValidationError as e:
             response = {
                 'success': False,
@@ -68,11 +68,11 @@ class EditMe(Resource):
     def post(self, decoded_payload):
         email = decoded_payload.get('email')
         data = request.json
-        schema = EditHODSchema(strict=True)
+        schema = EditHODSchema()
         payload = hod_api.payload or data
 
         try:
-            new_payload = schema.load(payload).data._asdict()
+            new_payload = schema.load(payload)._asdict()
         except ValidationError as e:
             response = {
                 'success': False,

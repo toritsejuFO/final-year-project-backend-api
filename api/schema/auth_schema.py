@@ -23,7 +23,7 @@ class StudentLoginSchema(Schema):
     password = fields.String(required=True, error_messages={'required': 'password is required'})
 
     @post_load
-    def new_student(self, data):
+    def new_student(self, data, **kwargs):
         return StudentLogin(**data)
 
     @validates('reg_no')
@@ -42,7 +42,7 @@ class LecturerLoginSchema(Schema):
     password = fields.String(required=True, error_messages={'required': 'password is required'})
 
     @post_load
-    def new_lecturer(self, data):
+    def new_lecturer(self, data, **kwargs):
         return LecturerLogin(**data)
 
     @validates('email')
@@ -61,7 +61,7 @@ class HODLoginSchema(Schema):
     password = fields.String(required=True, error_messages={'required': 'password is required'})
 
     @post_load
-    def new_hod(self, data):
+    def new_hod(self, data, **kwargs):
         return HODLogin(**data)
 
     @validates('email')

@@ -23,7 +23,7 @@ class EditMeSchema(Schema):
     department = fields.String(required=True, error_messages={'required': 'department is required'})
 
     @post_load
-    def edit_me(self, data):
+    def edit_me(self, data, **kwargs):
         return EditMe(**data)
 
     @validates('level')
@@ -55,7 +55,7 @@ class NewStudentSchema(Schema):
     password = fields.String(required=True, error_messages={'required': 'password is required'})
 
     @post_load
-    def new_student(self, data):
+    def new_student(self, data, **kwargs):
         return NewStudent(**data)
 
     @validates('firstname')

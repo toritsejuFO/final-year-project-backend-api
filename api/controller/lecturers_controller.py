@@ -24,10 +24,10 @@ class LecturerSignup(Resource):
     def post(self):
         data = request.json
         payload = lecturer_api.payload or data
-        schema = NewLecturerSchema(strict=True)
+        schema = NewLecturerSchema()
 
         try:
-            new_payload = schema.load(payload).data._asdict()
+            new_payload = schema.load(payload)._asdict()
         except ValidationError as e:
             response = {
                 'success': False,

@@ -21,7 +21,7 @@ class EditHODSchema(Schema):
     password = fields.String(required=True, error_messages={'required': 'Password is required'})
 
     @post_load
-    def edit_me(self, data):
+    def edit_me(self, data, **kwargs):
         return EditHOD(**data)
 
     @validates('name')
@@ -40,7 +40,7 @@ class NewHODSchema(Schema):
     password = fields.String(required=True, error_messages={'required': 'Password is required'})
 
     @post_load
-    def new_lecturer(self, data):
+    def new_lecturer(self, data, *kwargs):
         return NewHOD(**data)
 
     @validates('name')
