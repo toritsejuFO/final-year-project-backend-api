@@ -40,7 +40,7 @@ class EditMeSchema(Schema):
             raise ValidationError('Department cannot be empty')
         try:
             dept = Department.query.filter_by(code=value.upper()).first()
-        except:
+        except Exception:
             raise ValidationError('Internal Server Error')
         if not dept:
             raise ValidationError('This department does not exist currently')

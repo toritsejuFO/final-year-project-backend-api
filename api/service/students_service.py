@@ -8,7 +8,7 @@ class StudentService():
         response = {}
         try:
             students = Student.query.all()
-        except:
+        except Exception:
             response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
@@ -28,7 +28,7 @@ class StudentService():
         try:
             student = Student(**data)
             student.save()
-        except:
+        except Exception:
             response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
@@ -42,7 +42,7 @@ class StudentService():
         response = {}
         try:
             student = Student.query.filter_by(reg_no=reg_no).first()
-        except:
+        except Exception:
             response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
@@ -63,7 +63,7 @@ class StudentService():
         department = data['department']
         try:
             student = Student.query.filter_by(reg_no=reg_no).first()
-        except:
+        except Exception:
             response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
@@ -83,7 +83,7 @@ class StudentService():
             student.department = Department.query.filter_by(code=department).first()
             student.reg_complete = True
             student.save()
-        except:
+        except Exception:
             response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
@@ -97,7 +97,7 @@ class StudentService():
         response = {}
         try:
             student = Student.query.filter_by(reg_no=reg_no).first()
-        except:
+        except Exception:
             response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
@@ -122,7 +122,7 @@ class StudentService():
             response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
-        
+
 
         response['success'] = True
         response['data'] = [course.to_dict for course in courses]
@@ -133,7 +133,7 @@ class StudentService():
         response = {}
         try:
             student = Student.query.filter_by(reg_no=reg_no).first()
-        except:
+        except Exception:
             response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
