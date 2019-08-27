@@ -6,7 +6,7 @@ class CourseService:
         response = {}
         try:
             courses = Course.query.all()
-        except:
+        except Exception:
             response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
@@ -27,7 +27,7 @@ class CourseService:
             department_ = Department.query.filter_by(code=department).first()
             level_ = Level.query.filter_by(level=level).first()
             courses = Course.query.filter_by(department=department_, level=level_).all()
-        except:
+        except Exception:
             response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500

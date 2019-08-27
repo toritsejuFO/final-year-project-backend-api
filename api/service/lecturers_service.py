@@ -31,7 +31,7 @@ class LecturerService:
         response = {}
         try:
             lecturer = Lecturer.query.filter_by(email=email).first()
-        except:
+        except Exception:
             response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500

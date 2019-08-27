@@ -8,7 +8,7 @@ class StudentService():
         response = {}
         try:
             students = Student.query.all()
-        except:
+        except Exception:
             response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
@@ -28,7 +28,7 @@ class StudentService():
         try:
             student = Student(**data)
             student.save()
-        except:
+        except Exception:
             response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
@@ -42,7 +42,7 @@ class StudentService():
         response = {}
         try:
             student = Student.query.filter_by(reg_no=reg_no).first()
-        except:
+        except Exception:
             response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
@@ -63,7 +63,7 @@ class StudentService():
         department = data['department']
         try:
             student = Student.query.filter_by(reg_no=reg_no).first()
-        except:
+        except Exception:
             response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
@@ -83,7 +83,7 @@ class StudentService():
             student.department = Department.query.filter_by(code=department).first()
             student.reg_complete = True
             student.save()
-        except:
+        except Exception:
             response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
@@ -97,7 +97,7 @@ class StudentService():
         response = {}
         try:
             student = Student.query.filter_by(reg_no=reg_no).first()
-        except:
+        except Exception:
             response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
@@ -108,9 +108,21 @@ class StudentService():
             return response, 404
 
         # Select courses based on student's level and current semester
-        courses = list(filter(
-            lambda c: c.semester.semester == semester and c.level.level == student.level.level,
-            student.department.courses))
+        # If and only if student has completed registration
+        if not student.reg_complete or not student.fingerprint_template:
+            response['success'] = False
+            response['message'] = 'Student registration is incomplete and thus can not access courses'
+            return response, 423
+
+        try:
+            courses = list(filter(
+                lambda c: c.semester.semester == semester and c.level.level == student.level.level,
+                student.department.courses))
+        except Exception:
+            response['success'] = False
+            response['message'] = 'Internal Server Error'
+            return response, 500
+
 
         response['success'] = True
         response['data'] = [course.to_dict for course in courses]
@@ -121,7 +133,7 @@ class StudentService():
         response = {}
         try:
             student = Student.query.filter_by(reg_no=reg_no).first()
-        except:
+        except Exception:
             response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
@@ -130,6 +142,11 @@ class StudentService():
             response['success'] = False
             response['message'] = 'Student Not Found'
             return response, 404
+
+        if not student.reg_complete or not student.fingerprint_template:
+            response['success'] = False
+            response['message'] = 'You must complete your registration and thumbprint before registering your courses'
+            return response, 423
 
         if student.has_registered_course:
             response['success'] = False
