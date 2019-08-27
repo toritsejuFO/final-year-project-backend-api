@@ -40,10 +40,10 @@ class StudentLogin(Resource):
     def post(self):
         data = request.json
         payload = student_auth_api.payload or data
-        schema = StudentLoginSchema(strict=True)
+        schema = StudentLoginSchema()
 
         try:
-            new_payload = schema.load(payload).data._asdict()
+            new_payload = schema.load(payload)._asdict()
         except ValidationError as e:
             response = {
                 'success': False,
@@ -79,10 +79,10 @@ class LecturerLogin(Resource):
     def post(self):
         data = request.json
         payload = lecturer_auth_api.payload or data
-        schema = LecturerLoginSchema(strict=True)
+        schema = LecturerLoginSchema()
 
         try:
-            new_payload = schema.load(payload).data._asdict()
+            new_payload = schema.load(payload)._asdict()
         except ValidationError as e:
             response = {
                 'success': False,
@@ -118,10 +118,10 @@ class HODLogin(Resource):
     def post(self):
         data = request.json
         payload = hod_auth_api.payload or data
-        schema = HODLoginSchema(strict=True)
+        schema = HODLoginSchema()
 
         try:
-            new_payload = schema.load(payload).data._asdict()
+            new_payload = schema.load(payload)._asdict()
         except ValidationError as e:
             response = {
                 'success': False,

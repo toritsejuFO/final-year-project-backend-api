@@ -20,6 +20,15 @@ edit_me = hod_api.model('HOD Update', {
     'password': fields.String(required=True, description='HOD\'s password'),
 })
 
+assign_course_object = hod_api.model('Assign Course Object', {
+    'email': fields.String(required=True, description='Lecturer\'s email'),
+    'courses': fields.List(fields.String, required=True, description='List of courses to be assigned to lecturer')
+})
+
+assign_course_list = hod_api.model('Assign Courses List', {
+    'payload': fields.Nested(assign_course_object, required=True, description='List of course objects to be assigned to a lecturer', as_list=True)
+})
+
 
 @hod_api.route('/signup')
 class HODSignup(Resource):
@@ -29,10 +38,10 @@ class HODSignup(Resource):
     def post(self):
         data = request.json
         payload = hod_api.payload or data
-        schema = NewHODSchema(strict=True)
+        schema = NewHODSchema()
 
         try:
-            new_payload = schema.load(payload).data._asdict()
+            new_payload = schema.load(payload)._asdict()
         except ValidationError as e:
             response = {
                 'success': False,
@@ -59,11 +68,11 @@ class EditMe(Resource):
     def post(self, decoded_payload):
         email = decoded_payload.get('email')
         data = request.json
-        schema = EditHODSchema(strict=True)
+        schema = EditHODSchema()
         payload = hod_api.payload or data
 
         try:
-            new_payload = schema.load(payload).data._asdict()
+            new_payload = schema.load(payload)._asdict()
         except ValidationError as e:
             response = {
                 'success': False,
@@ -96,10 +105,11 @@ class CourseList(Resource):
 class AssignCourses(Resource):
     @hod_login_required
     @hod_api.doc('Assign Courses to Lecturers', security='apiKey')
+    @hod_api.expect(assign_course_list)
     def post(self, decoded_payload):
         email = decoded_payload.get('email')
-        data = request.json
-        payload = hod_api.payload or data
+        data = request.json.get('payload')
+        payload = hod_api.payload.get('payload') or data
         response, code = HODService.assign_courses(email=email, data=payload)
         return response, code
 

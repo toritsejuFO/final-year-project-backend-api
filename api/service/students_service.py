@@ -75,8 +75,8 @@ class StudentService():
 
         if student.reg_complete:
             response['success'] = False
-            response['message'] = "You cannot update your details anymore"
-            return response, 403
+            response['message'] = "You cannot update your details anymore. Contact Admin"
+            return response, 423
 
         try:
             student.level = Level.query.filter_by(level=level).first()
@@ -133,8 +133,8 @@ class StudentService():
 
         if student.has_registered_course:
             response['success'] = False
-            response['message'] = 'Registration can only be done once'
-            return response, 403
+            response['message'] = 'Registration can only be done once. Contact Admin'
+            return response, 423
 
         try:
             course_codes = data['courses']

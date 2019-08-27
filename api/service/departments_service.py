@@ -5,7 +5,7 @@ class DepartmentService:
     def get_all():
         response = {}
         try:
-            departments = Department.query.all()
+            departments = Department.query.order_by(Department.code).all()
         except Exception:
             response['success'] = False
             response['message'] = 'Internal Server Error'

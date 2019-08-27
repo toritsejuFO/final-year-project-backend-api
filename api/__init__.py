@@ -3,11 +3,13 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_restplus import Api
-from logger import file_handler
+from flask_mail import Mail
 
+from logger import file_handler
 from config import config_by_env
 
 db = SQLAlchemy()
+mail = Mail()
 
 authorizations = {
     'apiKey': {
@@ -26,6 +28,7 @@ def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config_by_env[config_name])
     db.init_app(app)
+    mail.init_app(app)
     api.init_app(app)
     app.logger.addHandler(file_handler)
 
@@ -38,6 +41,7 @@ def create_app(config_name):
     from api.controller import hod_auth_api as hod_auth_ns
     from api.controller import dept_api as dept_ns
     from api.controller import auth_verification_api as auth_verification_ns
+    from api.controller import current_api as current_ns
     api.add_namespace(student_ns, path='/students')
     api.add_namespace(student_auth_ns, path='/students')
     api.add_namespace(course_ns, path='/courses')
@@ -47,6 +51,7 @@ def create_app(config_name):
     api.add_namespace(hod_auth_ns, path='/hods')
     api.add_namespace(dept_ns, path='/departments')
     api.add_namespace(auth_verification_ns, path='/auth')
+    api.add_namespace(current_ns, path='/current')
 
     return app
 

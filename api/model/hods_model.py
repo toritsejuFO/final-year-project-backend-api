@@ -16,6 +16,7 @@ class HOD(db.Model):
     department_id = db.Column(db.Integer, db.ForeignKey('departments.id'))
     password_hash = db.Column(db.String(128))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    has_assigned_courses = db.Column(db.Boolean, default=False)
 
     def __init__(self, name, email, department_code, password):
         self.name = name.title()
@@ -32,6 +33,7 @@ class HOD(db.Model):
             'school': self.department.school.code,
             'registered_on': arrow.get(self.created_at).for_json(),
             'registered_since': arrow.get(self.created_at).humanize(),
+            'has_assigned_courses': self.has_assigned_courses
         }
         return json_hod
 

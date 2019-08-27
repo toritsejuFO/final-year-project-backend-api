@@ -18,7 +18,7 @@ class NewLecturerSchema(Schema):
     password = fields.String(required=True, error_messages={'required': 'Password is required'})
 
     @post_load
-    def new_lecturer(self, data):
+    def new_lecturer(self, data, **kwargs):
         return NewLecturer(**data)
 
     @validates('name')
