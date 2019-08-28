@@ -1,8 +1,12 @@
 from collections import namedtuple
+import re
 
 from marshmallow import Schema, ValidationError, fields, post_load, validates
 
 from api.model import HOD, Department
+
+def is_school_email(email):
+    return True if re.match(r'[^@]+@futo.edu.ng', email) else False
 
 NewHOD = namedtuple('NewHOD', [
     'name',
@@ -40,7 +44,7 @@ class NewHODSchema(Schema):
     password = fields.String(required=True, error_messages={'required': 'Password is required'})
 
     @post_load
-    def new_lecturer(self, data, *kwargs):
+    def new_hod(self, data, **kwargs):
         return NewHOD(**data)
 
     @validates('name')
@@ -59,6 +63,8 @@ class NewHODSchema(Schema):
             raise ValidationError('Email cannot be empty')
         if len(value) > max_len:
             raise ValidationError(f'Email cannot exceed {max_len} characters')
+        if not is_school_email(value):
+            raise ValidationError('Invalid email')
         if hod:
             raise ValidationError('HODs with this email already exists')
 

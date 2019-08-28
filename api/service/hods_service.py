@@ -1,5 +1,5 @@
 from api import db
-from api.model import HOD, Lecturer, Course
+from api.model import HOD, Lecturer, Course, Department
 
 class HODService:
     @staticmethod
@@ -9,6 +9,17 @@ class HODService:
         email = data['email']
         department_code = data['department']
         password = data['password']
+
+        try:
+            dept = Department.query.filter_by(code=department_code).first()
+            if dept and HOD.query.filter_by(department=dept).count() > 0:
+                response['success'] = False
+                response['message'] = f'HOD for {dept.name} has already been signed up'
+                return response, 423
+        except Exception:
+            response['success'] = False
+            response['message'] = 'Internal Server Error'
+            return response, 500
 
         try:
             hod = HOD(
