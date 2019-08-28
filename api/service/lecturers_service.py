@@ -18,6 +18,7 @@ class LecturerService:
             )
             lecturer.save()
         except Exception:
+            db.session.rollback()
             response['success'] = False
             response['message'] = "Internal Server Error"
             return response, 500
