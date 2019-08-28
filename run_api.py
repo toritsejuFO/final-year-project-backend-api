@@ -54,9 +54,13 @@ def test():
 @app.after_request
 def log_info(response):
     date = arrow.now('Africa/Lagos')
+    if os.environ.get('FLASK_ENV') is 'prod':
+        user_ip = request.headers.get(app.config['REAL_IP'])
+    else:
+        user_ip = request.remote_addr
     log_details = {
         'date': str(date),
-        'user_ip': request.remote_addr,
+        'user_ip': user_ip,
         'browser': request.user_agent.browser,
         'user_device': request.user_agent.platform,
         'method': request.method,
