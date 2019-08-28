@@ -13,6 +13,7 @@ class Config:
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', False)
     ADMINS = [f'no-reply@{MAIL_SERVER}.com']
+    REAL_IP = 'X-Real-IP'
 
 
 class DevelopmentConfig(Config):
