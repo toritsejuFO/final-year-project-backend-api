@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 import jwt
 from flask import request
 
+from api import db
 from api.model import Student, RevokedToken, Lecturer, HOD
 from config import jwt_key
 
@@ -75,6 +76,7 @@ class AuthService():
         try:
             RevokedToken(token=auth_token).save()
         except Exception:
+            db.session.rollback()
             response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
@@ -150,6 +152,7 @@ class AuthService():
         try:
             RevokedToken(token=auth_token).save()
         except Exception:
+            db.session.rollback()
             response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
@@ -225,6 +228,7 @@ class AuthService():
         try:
             RevokedToken(token=auth_token).save()
         except Exception:
+            db.session.rollback()
             response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500

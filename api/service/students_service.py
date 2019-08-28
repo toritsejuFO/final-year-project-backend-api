@@ -29,6 +29,7 @@ class StudentService():
             student = Student(**data)
             student.save()
         except Exception:
+            db.session.rollback()
             response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
@@ -84,6 +85,7 @@ class StudentService():
             student.reg_complete = True
             student.save()
         except Exception:
+            db.session.rollback()
             response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
@@ -162,7 +164,7 @@ class StudentService():
             student.has_registered_course = True
             student.save()
         except Exception as e:
-            print(repr(e))
+            db.session.rollback()
             response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500

@@ -19,6 +19,7 @@ class HODService:
             )
             hod.save()
         except Exception:
+            db.session.rollback()
             response['success'] = False
             response['message'] = "Internal Server Error"
             return response, 500
@@ -67,6 +68,7 @@ class HODService:
                 hod.password = data['password']
             hod.save()
         except Exception:
+            db.session.rollback()
             response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
@@ -148,6 +150,7 @@ class HODService:
                 hod.has_assigned_courses = True
                 hod.save()
         except Exception:
+            db.session.rollback()
             response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
