@@ -93,15 +93,25 @@ departments = [
         'code': 'PHY',
         'school_code': 'SOPS'
     },
+    {
+        'name': 'General Studies',
+        'code': 'DGS',
+        'school_code': 'DGS'
+    },
 ]
 
 
 def populate_departments_table():
-    for department in departments:
-        name = department['name']
-        code = department['code']
-        school_code = department['school_code']
-        Department(name=name, code=code, school_code=school_code).save()
+    try:
+        for department in departments:
+            name = department['name']
+            code = department['code']
+            school_code = department['school_code']
+            if not Department.exists(department_code=code):
+                Department(name=name, code=code, school_code=school_code).save()
+        print('departments table populated successfully')
+    except Exception as e:
+        print(f'Something failed: {e}')
 
 
 if __name__ == '__main__':
