@@ -18,6 +18,10 @@ class Department(db.Model):
         self.code = code
         self.school = School.query.filter_by(code=school_code).first()
 
+    @staticmethod
+    def exists(department_code):
+        return Department.query.filter_by(code=department_code).count() > 0
+
     @property
     def to_dict(self):
         json_department = {

@@ -21,7 +21,7 @@ authorizations = {
 
 title = 'Biometric Attendance and Exam Vieirfication System'
 description = 'Backend API for managing resources on the Biometric Attendance and Exam Vieirfication System'
-api = Api(doc='/docs', version='1.0', title=title, description=description, authorizations=authorizations)
+api = Api(doc='/fbdocs', version='1.0', title=title, description=description, authorizations=authorizations)
 
 
 def create_app(config_name):
