@@ -144,10 +144,10 @@ class HODService:
             response['message'] = 'HOD not found'
             return response, 404
 
-        if hod.has_assigned_courses:
-            response['success'] = False
-            response['message'] = 'Unable to assign courses more than once. Contact Admin'
-            return response, 423
+        # if hod.has_assigned_courses:
+        #     response['success'] = False
+        #     response['message'] = 'Unable to assign courses more than once. Contact Admin'
+        #     return response, 423
 
         try:
             for datum in data:
@@ -158,8 +158,8 @@ class HODService:
                     course = Course.query.filter_by(code=course_code).first()
                     lecturer.assign_course(course)
                 db.session.commit()
-                hod.has_assigned_courses = True
-                hod.save()
+                # hod.has_assigned_courses = True
+                # hod.save()
         except Exception:
             db.session.rollback()
             response['success'] = False
