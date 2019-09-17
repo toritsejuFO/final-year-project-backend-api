@@ -67,10 +67,16 @@ class AuthService():
             return response, 403
 
         # Check revoked token
-        if RevokedToken.check(token=auth_token):
+        try:
+            if RevokedToken.check(token=auth_token):
+                response['success'] = False
+                response['message'] = 'Revoked token. Please log in again'
+                return response, 403
+        except Exception:
+            db.session.rollback()
             response['success'] = False
-            response['message'] = 'Revoked token. Please log in again'
-            return response, 403
+            response['message'] = 'Internal Server Error. Revoke check Error'
+            return response, 500
 
         # Mark token as revoked and logout student
         try:
@@ -143,10 +149,16 @@ class AuthService():
             return response, 403
 
         # Check revoked token
-        if RevokedToken.check(token=auth_token):
+        try:
+            if RevokedToken.check(token=auth_token):
+                response['success'] = False
+                response['message'] = 'Revoked token. Please log in again'
+                return response, 403
+        except Exception:
+            db.session.rollback()
             response['success'] = False
-            response['message'] = 'Revoked token. Please log in again'
-            return response, 403
+            response['message'] = 'Internal Server Error. Revoke check Error'
+            return response, 500
 
         # Mark token as revoked and logout student
         try:
@@ -219,10 +231,16 @@ class AuthService():
             return response, 403
 
         # Check revoked token
-        if RevokedToken.check(token=auth_token):
+        try:
+            if RevokedToken.check(token=auth_token):
+                response['success'] = False
+                response['message'] = 'Revoked token. Please log in again'
+                return response, 403
+        except Exception:
+            db.session.rollback()
             response['success'] = False
-            response['message'] = 'Revoked token. Please log in again'
-            return response, 403
+            response['message'] = 'Internal Server Error. Revoke check Error'
+            return response, 500
 
         # Mark token as revoked and logout student
         try:
@@ -247,10 +265,16 @@ class AuthService():
             response['message'] = decoded_payload
             return response, 401
 
-        if RevokedToken.check(token=auth_token):
+        try:
+            if RevokedToken.check(token=auth_token):
+                response['success'] = False
+                response['message'] = 'Token revoked'
+                return response, 403
+        except Exception:
+            db.session.rollback()
             response['success'] = False
-            response['message'] = 'Token revoked'
-            return response, 403
+            response['message'] = 'Internal Server Error. Revoke check Error'
+            return response, 500
 
         response['success'] = True
         response['entity'] = decoded_payload['entity']
@@ -312,10 +336,16 @@ def student_login_required(func):
             return response, 401
 
         # Check revoked token
-        if RevokedToken.check(token=auth_token):
+        try:
+            if RevokedToken.check(token=auth_token):
+                response['success'] = False
+                response['message'] = 'Revoked token. Please log in again'
+                return response, 403
+        except Exception:
+            db.session.rollback()
             response['success'] = False
-            response['message'] = 'Revoked token. Please log in again'
-            return response, 403
+            response['message'] = 'Internal Server Error. Revoke check Error'
+            return response, 500
 
         return func(*args, **kwargs, decoded_payload=decoded_payload)
     return wrapper
@@ -341,10 +371,16 @@ def lecturer_login_required(func):
             return response, 401
 
         # Check revoked token
-        if RevokedToken.check(token=auth_token):
+        try:
+            if RevokedToken.check(token=auth_token):
+                response['success'] = False
+                response['message'] = 'Revoked token. Please log in again'
+                return response, 403
+        except Exception:
+            db.session.rollback()
             response['success'] = False
-            response['message'] = 'Revoked token. Please log in again'
-            return response, 403
+            response['message'] = 'Internal Server Error. Revoke check Error'
+            return response, 500
 
         return func(*args, **kwargs, decoded_payload=decoded_payload)
     return wrapper
@@ -370,10 +406,16 @@ def hod_login_required(func):
             return response, 401
 
         # Check revoked token
-        if RevokedToken.check(token=auth_token):
+        try:
+            if RevokedToken.check(token=auth_token):
+                response['success'] = False
+                response['message'] = 'Revoked token. Please log in again'
+                return response, 403
+        except Exception:
+            db.session.rollback()
             response['success'] = False
-            response['message'] = 'Revoked token. Please log in again'
-            return response, 403
+            response['message'] = 'Internal Server Error. Revoke check Error'
+            return response, 500
 
         return func(*args, **kwargs, decoded_payload=decoded_payload)
     return wrapper
