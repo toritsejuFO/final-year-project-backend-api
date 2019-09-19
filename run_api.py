@@ -8,8 +8,8 @@ from dotenv import load_dotenv
 from flask_migrate import Migrate
 
 from api import create_app, db
-from logger import request_logger
 from api.model import Student, Level, School, Department, Course, Semester, HOD, RevokedToken, Lecturer
+from logger import request_logger
 
 load_dotenv()
 
