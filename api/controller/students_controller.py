@@ -124,3 +124,16 @@ class RegisteredCourses(Resource):
         reg_no = decoded_payload.get('reg_no')
         response, code = StudentService.get_registered_courses(reg_no=reg_no)
         return response, code
+
+
+@student_api.route('/me/register/fingerprint')
+class RegisterFingerprintTemplate(Resource):
+    @student_login_required
+    @student_api.doc('Register Student\'s fingerprint', security='apiKey')
+    def post(self, decoded_payload):
+        reg_no = decoded_payload.get('reg_no')
+        data = request.json
+        payload = student_api.payload or data
+        response, code = StudentService.register_fingerprint(
+            reg_no=reg_no, data=payload)
+        return response, code
