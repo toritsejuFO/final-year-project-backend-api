@@ -4,6 +4,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_restplus import Api
 from flask_mail import Mail
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from logger import file_handler
 from config import config_by_env
@@ -26,6 +27,7 @@ api = Api(doc='/fbdocs', version='1.0', title=title, description=description, au
 
 def create_app(config_name):
     app = Flask(__name__)
+    app.wsgi_app = ProxyFix(app.wsgi_app)
     app.config.from_object(config_by_env[config_name])
     db.init_app(app)
     mail.init_app(app)

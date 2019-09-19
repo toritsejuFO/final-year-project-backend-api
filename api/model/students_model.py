@@ -31,8 +31,7 @@ class Student(db.Model):
     level_id = db.Column(db.Integer, db.ForeignKey('levels.id'))
     department_id = db.Column(db.Integer, db.ForeignKey('departments.id'))
     password_hash = db.Column(db.String(128))
-    fingerprint_template = db.Column(
-        db.String(256), unique=True, index=True, default=None)
+    fingerprint_template = db.Column(db.String(1112), unique=True, default=None)
     graduated = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     reg_complete = db.Column(db.Boolean, default=False)

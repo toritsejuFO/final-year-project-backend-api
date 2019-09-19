@@ -191,3 +191,36 @@ class StudentService():
         response['success'] = True
         response['data'] = [course.to_dict for course in student.registered_courses.all()]
         return response, 200
+
+    @staticmethod
+    def register_fingerprint(reg_no, data):
+        response = {}
+        try:
+            student = Student.query.filter_by(reg_no=reg_no).first()
+        except Exception:
+            response['success'] = False
+            response['message'] = 'Internal Server Error'
+            return response, 500
+
+        if not student:
+            response['success'] = False
+            response['message'] = 'Student Not Found'
+            return response, 404
+
+        if student.fingerprint_template:
+            response['success'] = False
+            response['message'] = 'Fingerprint registration can only be done once. Contact Admin'
+            return response, 423
+
+        try:
+            student.fingerprint_template = data['template']
+            student.save()
+        except Exception:
+            db.session.rollback()
+            response['success'] = False
+            response['message'] = 'Internal Server Error'
+            return response, 500
+
+        response['success'] = True
+        response['message'] = 'Fingerprint registered successfully'
+        return response, 200
