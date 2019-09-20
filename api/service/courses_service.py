@@ -21,7 +21,7 @@ class CourseService:
         return response, 200
 
     @staticmethod
-    def get_courses_by_dept_level(department, level):
+    def get_courses_by_dept_level(department, level, minimal):
         response = {}
         try:
             department_ = Department.query.filter_by(code=department).first()
@@ -38,5 +38,8 @@ class CourseService:
             return response, 404
 
         response['success'] = True
-        response['data'] = [course.to_dict for course in courses]
+        if minimal:
+            response['data'] = [course.code for course in courses]
+        else:
+            response['data'] = [course.to_dict for course in courses]
         return response, 200

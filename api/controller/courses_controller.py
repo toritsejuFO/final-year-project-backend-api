@@ -11,7 +11,7 @@ current_api = Namespace(
     'current', description='API endpoints for getting current session and semester')
 
 
-@course_api.route('')
+@course_api.route('/all')
 class CourseList(Resource):
     @course_api.doc('Get All Courses')
     def get(self):
@@ -20,11 +20,13 @@ class CourseList(Resource):
 
 
 @course_api.route('/<string:department>/<string:level>')
+@course_api.route('/<string:department>/<string:level>/<int:minimal>')
 class Course(Resource):
     @course_api.doc('Get Courses via Department & Level')
-    def get(self, department, level):
+    def get(self, department, level, minimal=0):
+        print(minimal)
         response, code = CourseService.get_courses_by_dept_level(
-            department=department, level=level)
+            department=department, level=level, minimal=minimal)
         return response, code
 
 
@@ -34,7 +36,7 @@ class CurrentSemester(Resource):
     def get(self):
         response = {
             'success': True,
-            'data': os.environ.get('CURRENT_SEMESTER')
+            'data': os.environ.get('CURRENT_SEMESTER') or 'unavailable'
         }
         return response, 200
 
@@ -45,6 +47,6 @@ class CurrentSession(Resource):
     def get(self):
         response = {
             'success': True,
-            'data': os.environ.get('CURRENT_SESSION')
+            'data': os.environ.get('CURRENT_SESSION') or 'unavailable'
         }
         return response, 200
