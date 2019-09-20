@@ -160,7 +160,7 @@ class HODService:
                     course = Course.query.filter_by(code=course_code).first()
                     lecturer.assign_course(course)
                 db.session.commit()
-                db.session.refresh(hod)
+                db.session.refresh(lecturer)
                 # hod.has_assigned_courses = True
                 # hod.save()
         except Exception:

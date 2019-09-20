@@ -46,10 +46,7 @@ def run():
 def test():
     tests = unittest.TestLoader().discover('test', pattern='test*.py')
     result = unittest.TextTestRunner(verbosity=2).run(tests)
-    if result.wasSuccessful():
-        return True
-    else:
-        return False
+    return result.wasSuccessful()
 
 @app.after_request
 def log_info(response):
