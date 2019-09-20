@@ -10,7 +10,7 @@ class DepartmentService:
             response['success'] = False
             response['message'] = 'Internal Server Error'
             return response, 500
-        
+
         if not departments:
             response['success'] = False
             response['message'] = 'Departments Not Found'

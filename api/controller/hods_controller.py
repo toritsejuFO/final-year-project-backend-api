@@ -60,7 +60,7 @@ class Me(Resource):
         response, code = HODService.get_me(email=email)
         return response, code
 
-@hod_api.route('/edit-me')
+@hod_api.route('/me/edit')
 class EditMe(Resource):
     @hod_login_required
     @hod_api.doc('Update HOD details', security='apiKey')

@@ -4,3 +4,4 @@ from api.controller.courses_controller import course_api, current_api
 from api.controller.lecturers_controller import lecturer_api
 from api.controller.hods_controller import hod_api
 from api.controller.departments_controller import dept_api
+from api.controller.schools_controller import school_api

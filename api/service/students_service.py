@@ -224,3 +224,34 @@ class StudentService():
         response['success'] = True
         response['message'] = 'Fingerprint registered successfully'
         return response, 200
+
+    @staticmethod
+    def verify_registered_courses(reg_no, course_code):
+        response = {}
+        try:
+            student = Student.query.filter_by(reg_no=reg_no).first()
+        except Exception:
+            response['success'] = False
+            response['message'] = 'Internal Server Error'
+            return response, 500
+
+        if not student:
+            response['success'] = False
+            response['message'] = 'Student Not Found'
+            return response, 404
+
+        try:
+            registered_course = student.registered_courses.filter_by(code=course_code).first()
+        except Exception:
+            response['success'] = False
+            response['message'] = 'Internal Server Error'
+            return response, 500
+
+        if not registered_course:
+            response['success'] = False
+            response['message'] = 'Student has not registered for this course'
+            return response, 200
+
+        response['success'] = True
+        response['message'] = 'Student has registered for this course'
+        return response, 200
