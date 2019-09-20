@@ -1,3 +1,4 @@
+from api import db
 from api.model import Lecturer
 
 class LecturerService:
@@ -17,7 +18,7 @@ class LecturerService:
                 password=password
             )
             lecturer.save()
-            db.session.refresh(hod)
+            db.session.refresh(lecturer)
         except Exception:
             db.session.rollback()
             response['success'] = False
