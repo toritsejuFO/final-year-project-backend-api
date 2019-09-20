@@ -28,6 +28,7 @@ class StudentService():
         try:
             student = Student(**data)
             student.save()
+            db.session.refresh()
         except Exception:
             db.session.rollback()
             response['success'] = False
@@ -84,6 +85,7 @@ class StudentService():
             student.department = Department.query.filter_by(code=department).first()
             student.reg_complete = True
             student.save()
+            db.session.refresh()
         except Exception:
             db.session.rollback()
             response['success'] = False
@@ -163,7 +165,8 @@ class StudentService():
             db.session.commit()
             student.has_registered_course = True
             student.save()
-        except Exception as e:
+            db.session.refresh()
+        except Exception:
             db.session.rollback()
             response['success'] = False
             response['message'] = 'Internal Server Error'
@@ -215,6 +218,7 @@ class StudentService():
         try:
             student.fingerprint_template = data['template']
             student.save()
+            db.session.refresh()
         except Exception:
             db.session.rollback()
             response['success'] = False

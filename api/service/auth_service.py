@@ -81,6 +81,7 @@ class AuthService():
         # Mark token as revoked and logout student
         try:
             RevokedToken(token=auth_token).save()
+            db.session.refresh()
         except Exception:
             db.session.rollback()
             response['success'] = False
@@ -163,6 +164,7 @@ class AuthService():
         # Mark token as revoked and logout student
         try:
             RevokedToken(token=auth_token).save()
+            db.session.refresh()
         except Exception:
             db.session.rollback()
             response['success'] = False
@@ -245,6 +247,7 @@ class AuthService():
         # Mark token as revoked and logout student
         try:
             RevokedToken(token=auth_token).save()
+            db.session.refresh()
         except Exception:
             db.session.rollback()
             response['success'] = False
