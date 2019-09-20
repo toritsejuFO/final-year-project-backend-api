@@ -12,6 +12,18 @@ class School(db.Model):
         self.name = name
         self.code = code
 
+    @staticmethod
+    def exists(school_code):
+        return School.query.filter_by(code=school_code).count() > 0
+
+    @property
+    def to_dict(self):
+        json_school = {
+            'code': self.code,
+            'fullname': self.name
+        }
+        return json_school
+
     def save(self):
         db.session.add(self)
         db.session.commit()
