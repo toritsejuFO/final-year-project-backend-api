@@ -59,10 +59,10 @@ class Student(db.Model):
             'department': self.get_department,
             'school': self.get_school,
             'fingerprint': True if self.fingerprint_template else False,
-            'graduated': self.graduated,
+            # 'graduated': self.graduated,
             'reg_completed': self.reg_complete,
-            'registered_on': arrow.get(self.created_at).for_json(),
-            'registered_since': arrow.get(self.created_at).humanize(),
+            # 'registered_on': arrow.get(self.created_at).for_json(),
+            # 'registered_since': arrow.get(self.created_at).humanize(),
             'has_registered_courses': self.has_registered_course
         }
         return json_student

@@ -67,7 +67,7 @@ class Me(Resource):
         return response, code
 
 
-@student_api.route('/edit-me')
+@student_api.route('/me/edit')
 class EditMe(Resource):
     @student_login_required
     @student_api.expect(edit_me)
@@ -92,7 +92,7 @@ class EditMe(Resource):
 
 
 @student_api.route('/me/courses/<string:semester>')
-class StudentCourses(Resource):
+class StudentCourseList(Resource):
     @student_login_required
     @student_api.doc('View student courses per semester', security='apiKey')
     def get(self, semester, decoded_payload):
@@ -117,7 +117,7 @@ class RegisterCourses(Resource):
 
 
 @student_api.route('/me/registered/courses')
-class RegisteredCourses(Resource):
+class RegisteredCourseList(Resource):
     @student_login_required
     @student_api.doc('View Student\'s Registered Courses', security='apiKey')
     def get(self, decoded_payload):
@@ -136,4 +136,12 @@ class RegisterFingerprintTemplate(Resource):
         payload = student_api.payload or data
         response, code = StudentService.register_fingerprint(
             reg_no=reg_no, data=payload)
+        return response, code
+
+
+@student_api.route('/<string:reg_no>/<string:course>')
+class VerifyRegisteredCourse(Resource):
+    def get(self, reg_no, course):
+        response, code = StudentService.verify_registered_courses(
+            reg_no=reg_no, course_code=course)
         return response, code
