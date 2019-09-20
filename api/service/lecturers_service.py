@@ -17,7 +17,7 @@ class LecturerService:
                 password=password
             )
             lecturer.save()
-            db.session.refresh()
+            db.session.refresh(hod)
         except Exception:
             db.session.rollback()
             response['success'] = False

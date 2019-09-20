@@ -29,7 +29,7 @@ class HODService:
                 password=password
             )
             hod.save()
-            db.session.refresh()
+            db.session.refresh(hod)
         except Exception:
             db.session.rollback()
             response['success'] = False
@@ -79,7 +79,7 @@ class HODService:
             if data['password'] != '':
                 hod.password = data['password']
             hod.save()
-            db.session.refresh()
+            db.session.refresh(hod)
         except Exception:
             db.session.rollback()
             response['success'] = False
@@ -160,7 +160,7 @@ class HODService:
                     course = Course.query.filter_by(code=course_code).first()
                     lecturer.assign_course(course)
                 db.session.commit()
-                db.session.refresh()
+                db.session.refresh(hod)
                 # hod.has_assigned_courses = True
                 # hod.save()
         except Exception:
