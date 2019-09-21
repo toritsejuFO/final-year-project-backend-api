@@ -1,4 +1,4 @@
-from api import db
+from api import db, AppException
 from api.model import HOD, Lecturer, Course, Department
 
 class HODService:
@@ -17,9 +17,7 @@ class HODService:
                 response['message'] = f'HOD for {dept.name} has already been signed up'
                 return response, 423
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         try:
             hod = HOD(
@@ -32,9 +30,7 @@ class HODService:
             db.session.refresh(hod)
         except Exception:
             db.session.rollback()
-            response['success'] = False
-            response['message'] = "Internal Server Error"
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         response['success'] = True
         response['message'] = 'New HOD registered successsfully'
@@ -46,9 +42,7 @@ class HODService:
         try:
             hod = HOD.query.filter_by(email=email).first()
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         if not hod:
             response['success'] = False
@@ -65,9 +59,7 @@ class HODService:
         try:
             hod = HOD.query.filter_by(email=email).first()
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         if not hod:
             response['success'] = False
@@ -82,9 +74,7 @@ class HODService:
             db.session.refresh(hod)
         except Exception:
             db.session.rollback()
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         response['success'] = True
         response['message'] = 'Details updated successfully'
@@ -96,9 +86,7 @@ class HODService:
         try:
             hod = HOD.query.filter_by(email=email).first()
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         if not hod:
             response['success'] = False
@@ -115,9 +103,7 @@ class HODService:
         try:
             hod = HOD.query.filter_by(email=email).first()
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         if not hod:
             response['success'] = False
@@ -137,9 +123,7 @@ class HODService:
         try:
             hod = HOD.query.filter_by(email=email).first()
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         if not hod:
             response['success'] = False
@@ -165,9 +149,7 @@ class HODService:
                 # hod.save()
         except Exception:
             db.session.rollback()
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         response['success'] = True
         response['message'] = 'Courses assigned successfully'
@@ -179,9 +161,7 @@ class HODService:
         try:
             hod = HOD.query.filter_by(email=email).first()
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         if not hod:
             response['success'] = False

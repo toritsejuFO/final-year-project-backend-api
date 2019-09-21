@@ -1,3 +1,4 @@
+from api import AppException
 from api.model import Department
 
 class DepartmentService:
@@ -7,9 +8,7 @@ class DepartmentService:
         try:
             departments = Department.query.order_by(Department.code).all()
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         if not departments:
             response['success'] = False

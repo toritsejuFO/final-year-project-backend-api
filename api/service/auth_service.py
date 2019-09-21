@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import jwt
 from flask import request
 
-from api import db
+from api import db, AppException
 from api.model import Student, RevokedToken, Lecturer, HOD
 from config import jwt_key
 
@@ -18,9 +18,7 @@ class AuthService():
         try:
             student = Student.query.filter_by(reg_no=reg_no).first()
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         if not student:
             response['success'] = False
@@ -73,18 +71,14 @@ class AuthService():
                 response['message'] = 'Revoked token. Please log in again'
                 return response, 403
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error. Revoke check Error'
-            return response, 500
+            raise AppException('Internal Server Error. Revoke check Error', 500)
 
         # Mark token as revoked and logout student
         try:
             RevokedToken(token=auth_token).save()
         except Exception:
             db.session.rollback()
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         response['success'] = True
         response['message'] = 'Logged out successfully'
@@ -99,9 +93,7 @@ class AuthService():
         try:
             lecturer = Lecturer.query.filter_by(email=email).first()
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         if not lecturer:
             response['success'] = False
@@ -154,18 +146,14 @@ class AuthService():
                 response['message'] = 'Revoked token. Please log in again'
                 return response, 403
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error. Revoke check Error'
-            return response, 500
+            raise AppException('Internal Server Error. Revoke check Error', 500)
 
         # Mark token as revoked and logout student
         try:
             RevokedToken(token=auth_token).save()
         except Exception:
             db.session.rollback()
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         response['success'] = True
         response['message'] = 'Logged out successfully'
@@ -180,9 +168,7 @@ class AuthService():
         try:
             hod = HOD.query.filter_by(email=email).first()
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         if not hod:
             response['success'] = False
@@ -235,18 +221,14 @@ class AuthService():
                 response['message'] = 'Revoked token. Please log in again'
                 return response, 403
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error. Revoke check Error'
-            return response, 500
+            raise AppException('Internal Server Error. Revoke Check Error', 500)
 
         # Mark token as revoked and logout student
         try:
             RevokedToken(token=auth_token).save()
         except Exception:
             db.session.rollback()
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         response['success'] = True
         response['message'] = 'Logged out successfully'
@@ -268,9 +250,7 @@ class AuthService():
                 response['message'] = 'Token revoked'
                 return response, 403
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error. Revoke check Error'
-            return response, 500
+            raise AppException('Internal Server Error. Revoke Check Error', 500)
 
         response['success'] = True
         response['entity'] = decoded_payload['entity']
@@ -338,9 +318,7 @@ def student_login_required(func):
                 response['message'] = 'Revoked token. Please log in again'
                 return response, 403
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error. Revoke check Error'
-            return response, 500
+            raise AppException('Internal Server Error. Revoke Check Error', 500)
 
         return func(*args, **kwargs, decoded_payload=decoded_payload)
     return wrapper
@@ -372,9 +350,7 @@ def lecturer_login_required(func):
                 response['message'] = 'Revoked token. Please log in again'
                 return response, 403
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error. Revoke check Error'
-            return response, 500
+            raise AppException('Internal Server Error. Revoke Check Error', 500)
 
         return func(*args, **kwargs, decoded_payload=decoded_payload)
     return wrapper
@@ -406,9 +382,7 @@ def hod_login_required(func):
                 response['message'] = 'Revoked token. Please log in again'
                 return response, 403
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error. Revoke check Error'
-            return response, 500
+            raise AppException('Internal Server Error. Revoke Check Error', 500)
 
         return func(*args, **kwargs, decoded_payload=decoded_payload)
     return wrapper

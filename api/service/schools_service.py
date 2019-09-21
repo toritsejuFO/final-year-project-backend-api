@@ -1,3 +1,4 @@
+from api import AppException
 from api.model import School
 
 class SchoolService:
@@ -7,9 +8,7 @@ class SchoolService:
         try:
             schools = School.query.order_by(School.code).all()
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         if not schools:
             response['success'] = False
@@ -26,9 +25,7 @@ class SchoolService:
         try:
             school = School.query.filter_by(code=school_code).first()
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         if not school:
             response['success'] = False

@@ -1,4 +1,4 @@
-from api import db
+from api import db, AppException
 from api.model import Lecturer
 
 class LecturerService:
@@ -21,9 +21,7 @@ class LecturerService:
             db.session.refresh(lecturer)
         except Exception:
             db.session.rollback()
-            response['success'] = False
-            response['message'] = "Internal Server Error"
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         response['success'] = True
         response['message'] = 'New Lecturer registered successsfully'
@@ -35,9 +33,7 @@ class LecturerService:
         try:
             lecturer = Lecturer.query.filter_by(email=email).first()
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         if not lecturer:
             response['success'] = False

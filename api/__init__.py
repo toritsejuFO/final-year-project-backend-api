@@ -6,8 +6,8 @@ from flask_restplus import Api
 from flask_mail import Mail
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from logger import file_handler
 from config import config_by_env
+from logger import stream_logger, logger
 
 db = SQLAlchemy()
 mail = Mail()
@@ -32,7 +32,18 @@ def create_app(config_name):
     db.init_app(app)
     mail.init_app(app)
     api.init_app(app)
-    app.logger.addHandler(file_handler)
+
+    # Default error handler
+    @app.errorhandler(Exception)
+    def handle_exception(error):
+        stream_logger.exception(error)
+        if not app.debug:
+            logger.exception(error)
+        response = {
+            'status': False,
+            'message': error.message
+        }
+        return response, error.status
 
     from api.controller import student_api as student_ns
     from api.controller import student_auth_api as student_auth_ns
@@ -61,3 +72,9 @@ def create_app(config_name):
 
 def select_table_name(table):
     return os.environ.get(table)
+
+class AppException(Exception):
+    def __init__(self, message, status):
+        Exception.__init__(self)
+        self.message = message
+        self.status = status
