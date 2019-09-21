@@ -9,7 +9,7 @@ from flask_migrate import Migrate
 
 from api import create_app, db
 from api.model import Student, Level, School, Department, Course, Semester, HOD, RevokedToken, Lecturer
-from logger import request_logger
+from logger import request_logger, stream_logger
 
 load_dotenv()
 
@@ -52,22 +52,23 @@ def test():
 def log_info(response):
     date = arrow.now('Africa/Lagos')
     if os.environ.get('FLASK_ENV') is 'prod':
-        user_ip = request.headers.get(app.config['REAL_IP'])
+        ip = request.headers.get(app.config['REAL_IP'])
     else:
-        user_ip = request.remote_addr
+        ip = request.remote_addr
     log_details = {
-        'date': str(date),
-        'user_ip': user_ip,
+        'date': date.format(),
+        'ip': ip,
         'browser': request.user_agent.browser,
-        'user_device': request.user_agent.platform,
-        'method': request.method,
-        'request_url': request.url,
+        'device': request.user_agent.platform,
         'status_code': response.status_code,
+        'path': request.path,
+        'method': request.method,
     }
     response.headers.add('Access-Control-Allow-Origin', '*')
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type, x-auth-token')
-    request_logger.warning(log_details)
-    app.logger.info(log_details)
+    stream_logger.debug(log_details)
+    if not app.debug:
+        request_logger.info(log_details)
     return response
 
 if __name__ == "__main__":

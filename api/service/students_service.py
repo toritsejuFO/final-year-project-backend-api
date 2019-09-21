@@ -1,4 +1,4 @@
-from api import db
+from api import db, AppException
 from api.model import Student, Department, Level, Course
 
 
@@ -9,9 +9,7 @@ class StudentService():
         try:
             students = Student.query.all()
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         if not students:
             response['success'] = False
@@ -31,9 +29,7 @@ class StudentService():
             db.session.refresh(student)
         except Exception:
             db.session.rollback()
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         response['success'] = True
         response['message'] = 'New student successfully registered'
@@ -45,9 +41,7 @@ class StudentService():
         try:
             student = Student.query.filter_by(reg_no=reg_no).first()
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         if not student:
             response['success'] = False
@@ -66,9 +60,7 @@ class StudentService():
         try:
             student = Student.query.filter_by(reg_no=reg_no).first()
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         if not student:
             response['success'] = False
@@ -88,9 +80,7 @@ class StudentService():
             db.session.refresh(student)
         except Exception:
             db.session.rollback()
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         response['success'] = True
         response['message'] = 'Details updated successfully'
@@ -102,9 +92,7 @@ class StudentService():
         try:
             student = Student.query.filter_by(reg_no=reg_no).first()
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         if not student:
             response['success'] = False
@@ -123,9 +111,7 @@ class StudentService():
                 lambda c: c.semester.semester == semester and c.level.level == student.level.level,
                 student.department.courses))
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
 
         response['success'] = True
@@ -138,9 +124,7 @@ class StudentService():
         try:
             student = Student.query.filter_by(reg_no=reg_no).first()
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         if not student:
             response['success'] = False
@@ -168,9 +152,7 @@ class StudentService():
             db.session.refresh(student)
         except Exception:
             db.session.rollback()
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         response['success'] = True
         response['message'] = 'Courses registered successfully'
@@ -182,9 +164,7 @@ class StudentService():
         try:
             student = Student.query.filter_by(reg_no=reg_no).first()
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         if not student:
             response['success'] = False
@@ -201,9 +181,7 @@ class StudentService():
         try:
             student = Student.query.filter_by(reg_no=reg_no).first()
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         if not student:
             response['success'] = False
@@ -221,9 +199,7 @@ class StudentService():
             db.session.refresh(student)
         except Exception:
             db.session.rollback()
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         response['success'] = True
         response['message'] = 'Fingerprint registered successfully'
@@ -235,9 +211,7 @@ class StudentService():
         try:
             student = Student.query.filter_by(reg_no=reg_no).first()
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         if not student:
             response['success'] = False
@@ -247,9 +221,7 @@ class StudentService():
         try:
             registered_course = student.registered_courses.filter_by(code=course_code).first()
         except Exception:
-            response['success'] = False
-            response['message'] = 'Internal Server Error'
-            return response, 500
+            raise AppException('Internal Server Error', 500)
 
         if not registered_course:
             response['success'] = False
