@@ -13,11 +13,9 @@ semester = os.environ.get('CURRENT_ASSIGNED_COURSES_SEMESTER')
 table_name = select_table_name(f'ASSIGNED_COURSES_{semester}_{session}')
 
 assigned_courses = db.Table(table_name,
-                            db.Column('lecturer_id', db.Integer, db.ForeignKey(
-                                'lecturers.id'), primary_key=True),
-                            db.Column('course_id', db.Integer, db.ForeignKey(
-                                'courses.id'), primary_key=True)
-                            )
+    db.Column('lecturer_id', db.Integer, db.ForeignKey('lecturers.id'), primary_key=True),
+    db.Column('course_id', db.Integer, db.ForeignKey('courses.id'), primary_key=True),
+    extend_existing=True)
 
 
 class Lecturer(db.Model):
