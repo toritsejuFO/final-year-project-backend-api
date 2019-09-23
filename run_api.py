@@ -7,18 +7,18 @@ from flask import request
 from dotenv import load_dotenv
 from flask_migrate import Migrate
 
+load_dotenv()
+
 from api import create_app, db
 from api.model import Student, Level, School, Department, Course, Semester, HOD, RevokedToken, Lecturer
 from logger import request_logger, stream_logger
-
-load_dotenv()
 
 if os.environ.get('FLASK_ENV') is None:
     print('FLASK_ENV not provided')
     sys.exit()
 
 app = create_app(os.environ.get('FLASK_ENV'))
-app.app_context().push()
+# app.app_context().push()
 
 migrate = Migrate(app, db)
 
