@@ -40,8 +40,8 @@ def create_app(config_name):
         if not app.debug:
             logger.exception(error)
         response = {
-            'status': False,
-            'message': error.message
+            'message': error.message,
+            'status': False
         }
         return response, error.status
 

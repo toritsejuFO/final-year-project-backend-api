@@ -26,7 +26,6 @@ class StudentService():
         try:
             student = Student(**data)
             student.save()
-            db.session.refresh(student)
         except Exception:
             db.session.rollback()
             raise AppException('Internal Server Error', 500)
@@ -77,7 +76,6 @@ class StudentService():
             student.department = Department.query.filter_by(code=department).first()
             student.reg_complete = True
             student.save()
-            db.session.refresh(student)
         except Exception:
             db.session.rollback()
             raise AppException('Internal Server Error', 500)
@@ -149,7 +147,6 @@ class StudentService():
             db.session.commit()
             student.has_registered_course = True
             student.save()
-            db.session.refresh(student)
         except Exception:
             db.session.rollback()
             raise AppException('Internal Server Error', 500)
@@ -196,7 +193,6 @@ class StudentService():
         try:
             student.fingerprint_template = data['template']
             student.save()
-            db.session.refresh(student)
         except Exception:
             db.session.rollback()
             raise AppException('Internal Server Error', 500)
