@@ -12,7 +12,7 @@ class Level(db.Model):
         self.level = level
 
     @staticmethod
-    def exists(department_code):
+    def exists(level):
         return Level.query.filter_by(level=level).count() > 0
 
     def save(self):

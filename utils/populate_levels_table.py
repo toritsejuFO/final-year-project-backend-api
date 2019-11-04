@@ -12,9 +12,9 @@ levels = [
 
 
 def populate_levels_table():
-    try
+    try:
         for level in levels:
-            if not Level.exists(level=level)
+            if not Level.exists(level=level):
                 Level(level=level).save()
         print('levels table populated succefully')
     except Exception as e:

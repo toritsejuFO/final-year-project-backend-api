@@ -49,7 +49,7 @@ schools = [
 def populate_schools_table():
     try:
         for school in schools:
-            if not School.exists(code=school.code):
+            if not School.exists(code=school['code']):
                 School(name=school['name'], code=school['code']).save()
         print('schools table populated succefully')
     except Exception as e:

@@ -104,8 +104,6 @@ departments = [
 def populate_departments_table():
     try:
         for department in departments:
-            if Department.query.filter_by(code=school.code).count() > 0:
-            continue
             name = department['name']
             code = department['code']
             school_code = department['school_code']

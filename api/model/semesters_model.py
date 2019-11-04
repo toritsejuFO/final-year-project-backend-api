@@ -12,7 +12,7 @@ class Semester(db.Model):
         self.semester = semester
 
     @staticmethod
-    def exists(department_code):
+    def exists(semester):
         return Semester.query.filter_by(semester=semester).count() > 0
 
     def save(self):
