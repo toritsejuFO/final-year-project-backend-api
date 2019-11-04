@@ -11,6 +11,10 @@ class Semester(db.Model):
     def __init__(self, semester):
         self.semester = semester
 
+    @staticmethod
+    def exists(department_code):
+        return Semester.query.filter_by(semester=semester).count() > 0
+
     def save(self):
         db.session.add(self)
         db.session.commit()

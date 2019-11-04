@@ -281,7 +281,7 @@ courses = [
     {
         'title': 'General Studies',
         'code': 'GST201',
-        'level': '100',
+        'level': '200',
         'department_code': 'DGS',
         'semester': 'second',
         'units': '2'
