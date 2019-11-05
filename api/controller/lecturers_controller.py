@@ -22,6 +22,7 @@ class LecturerSignup(Resource):
     @lecturer_api.response(201, 'New lecturer successfully registered')
     @lecturer_api.expect(lecturer_reg)
     def post(self):
+        ''' Signup a new lecturer '''
         data = request.json
         payload = lecturer_api.payload or data
         schema = NewLecturerSchema()
@@ -42,6 +43,7 @@ class Me(Resource):
     @lecturer_login_required
     @lecturer_api.doc('View Lecturer details', security='apiKey')
     def get(self, decoded_payload):
+        ''' Get lecturer details including assigned courses if any '''
         email = decoded_payload.get('email')
         response, code = LecturerService.get_me(email=email)
         return response, code
