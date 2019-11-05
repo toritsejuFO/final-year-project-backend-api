@@ -31,6 +31,7 @@ courses_registration = student_api.model('Courses Registration', {
 class StudentList(Resource):
     @student_api.doc('Get all students')
     def get(self):
+        ''' Get all students '''
         response, code = StudentService.get_all_students()
         return response, code
 
@@ -41,6 +42,7 @@ class Signup(Resource):
     @student_api.response(201, 'New student successfully registered')
     @student_api.expect(student_reg)
     def post(self):
+        ''' Signup a new student '''
         data = request.json
         payload = student_api.payload or data
         schema = NewStudentSchema()
@@ -62,6 +64,7 @@ class Me(Resource):
     @student_login_required
     @student_api.doc('View student details', security='apiKey')
     def get(self, decoded_payload):
+        ''' Get details of logged in student '''
         reg_no = decoded_payload.get('reg_no')
         response, code = StudentService.get_me(reg_no=reg_no)
         return response, code
@@ -73,6 +76,7 @@ class EditMe(Resource):
     @student_api.expect(edit_me)
     @student_api.doc('Edit/Update student details', security='apiKey')
     def post(self, decoded_payload):
+        ''' Update details of logged in student '''
         reg_no = decoded_payload.get('reg_no')
         data = request.json
         payload = student_api.payload or data
@@ -96,6 +100,7 @@ class StudentCourseList(Resource):
     @student_login_required
     @student_api.doc('View student courses per semester', security='apiKey')
     def get(self, semester, decoded_payload):
+        ''' View student courses of specified semester '''
         reg_no = decoded_payload.get('reg_no')
         response, code = StudentService.get_me_courses(
             reg_no=reg_no, semester=semester)
@@ -108,6 +113,7 @@ class RegisterCourses(Resource):
     @student_api.expect(courses_registration)
     @student_api.doc('Register Student Courses', security='apiKey')
     def post(self, decoded_payload):
+        ''' Register courses for logged in student '''
         reg_no = decoded_payload.get('reg_no')
         data = request.json
         payload = student_api.payload or data
@@ -121,6 +127,7 @@ class RegisteredCourseList(Resource):
     @student_login_required
     @student_api.doc('View Student\'s Registered Courses', security='apiKey')
     def get(self, decoded_payload):
+        ''' View registered courses of logged in student '''
         reg_no = decoded_payload.get('reg_no')
         response, code = StudentService.get_registered_courses(reg_no=reg_no)
         return response, code
@@ -131,6 +138,7 @@ class RegisterFingerprintTemplate(Resource):
     @student_login_required
     @student_api.doc('Register Student\'s fingerprint', security='apiKey')
     def post(self, decoded_payload):
+        ''' HW: Register fingerprint for registered student '''
         reg_no = decoded_payload.get('reg_no')
         data = request.json
         payload = student_api.payload or data
@@ -142,6 +150,15 @@ class RegisterFingerprintTemplate(Resource):
 @student_api.route('/<string:reg_no>/<string:course>')
 class VerifyRegisteredCourse(Resource):
     def get(self, reg_no, course):
+        ''' Verify if student has registered a course '''
         response, code = StudentService.verify_registered_courses(
             reg_no=reg_no, course_code=course)
+        return response, code
+
+@student_api.route('/registered/<string:course>/<string:department>')
+class RegisteredCourseStudentList(Resource):
+    def get(self, course, department):
+        ''' Return all the students from a department that have registered for a course '''
+        response, code = StudentService.get_registered_students(
+            course_code=course, department_code=department)
         return response, code

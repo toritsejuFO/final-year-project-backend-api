@@ -9,6 +9,7 @@ school_api = Namespace('schools', description='API endpoints for managing school
 class SchoolList(Resource):
     @school_api.doc('Get All Schools')
     def get(self):
+        ''' Get all schools '''
         response, code = SchoolService.get_all()
         return response, code
 
@@ -16,5 +17,6 @@ class SchoolList(Resource):
 class DepartmentList(Resource):
     @school_api.doc('Get All departments in a school')
     def get(self, school):
+        ''' Get all departments in provided school '''
         response, code = SchoolService.get_departments(school_code=school)
         return response, code

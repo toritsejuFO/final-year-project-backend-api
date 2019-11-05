@@ -9,5 +9,6 @@ dept_api = Namespace('departments', description='API endpoints for managing depa
 class DepartmentList(Resource):
     @dept_api.doc('Get All Departments')
     def get(self):
+        ''' Get all departments '''
         response, code = DepartmentService.get_all()
         return response, code

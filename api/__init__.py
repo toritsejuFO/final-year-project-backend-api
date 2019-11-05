@@ -41,7 +41,7 @@ def create_app(config_name):
             logger.exception(error)
         response = {
             'message': error.message,
-            'status': False
+            'success': False
         }
         return response, error.status
 

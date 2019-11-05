@@ -7,9 +7,13 @@ semesters = [
 ]
 
 def populate_semesters_table():
-    for semester in semesters:
-        Semester(semester=semester).save()
-    print('Semesters table populated successfully')
+    try:
+        for semester in semesters:
+            if not Semester.exists(semester=semester):
+                Semester(semester=semester).save()
+        print('Semesters table populated successfully')
+    except Exception as e:
+        print(f'Something failed {e}')
 
 if __name__ == "__main__":
     populate_semesters_table()

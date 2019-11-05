@@ -13,8 +13,8 @@ class School(db.Model):
         self.code = code
 
     @staticmethod
-    def exists(school_code):
-        return School.query.filter_by(code=school_code).count() > 0
+    def exists(code):
+        return School.query.filter_by(code=code).count() > 0
 
     @property
     def to_dict(self):

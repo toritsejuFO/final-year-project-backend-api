@@ -38,6 +38,7 @@ class StudentLogin(Resource):
     @student_auth_api.response(200, 'Logged in successfully')
     @student_auth_api.expect(student_login)
     def post(self):
+        ''' Authenticate a student '''
         data = request.json
         payload = student_auth_api.payload or data
         schema = StudentLoginSchema()
@@ -60,6 +61,7 @@ class StudentLogout(Resource):
     @student_auth_api.doc('Log out a student', security='apiKey')
     @student_auth_api.response(200, 'Logged out successfully')
     def get(self):
+        ''' Logout a student '''
         auth_token = request.headers.get('x-auth-token')
         if not auth_token or auth_token is None:
             response = {
@@ -77,6 +79,7 @@ class LecturerLogin(Resource):
     @lecturer_auth_api.response(200, 'Logged in successfully')
     @lecturer_auth_api.expect(lecturer_login)
     def post(self):
+        ''' Authenticate a lecturer '''
         data = request.json
         payload = lecturer_auth_api.payload or data
         schema = LecturerLoginSchema()
@@ -99,6 +102,7 @@ class LecturerLogout(Resource):
     @lecturer_auth_api.doc('Log out a lecturer', security='apiKey')
     @lecturer_auth_api.response(200, 'Logged out successfully')
     def get(self):
+        ''' Logout a lecturer '''
         auth_token = request.headers.get('x-auth-token')
         if not auth_token or auth_token is None:
             response = {
@@ -116,6 +120,7 @@ class HODLogin(Resource):
     @hod_auth_api.response(200, 'Logged in successfully')
     @hod_auth_api.expect(hod_login)
     def post(self):
+        ''' Authenticate an HOD '''
         data = request.json
         payload = hod_auth_api.payload or data
         schema = HODLoginSchema()
@@ -138,6 +143,7 @@ class HODLogout(Resource):
     @hod_auth_api.doc('Log out an HOD', security='apiKey')
     @hod_auth_api.response(200, 'Logged out successfully')
     def get(self):
+        ''' Logout an HOD '''
         auth_token = request.headers.get('x-auth-token')
         if not auth_token or auth_token is None:
             response = {
@@ -157,6 +163,7 @@ class AuthTokenVerification(Resource):
     @auth_verification_api.response(401, 'Expired Token')
     @auth_verification_api.response(403, 'Revoked Token')
     def get(self):
+        ''' Verify a token's validity '''
         auth_token = request.headers.get('x-auth-token')
         if not auth_token or auth_token is None:
             response = {

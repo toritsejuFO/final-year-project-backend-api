@@ -9,14 +9,16 @@ from api.model import Level
 
 session = os.environ.get('CURRENT_REGISTERED_COURSES_SESSION')
 semester = os.environ.get('CURRENT_REGISTERED_COURSES_SEMESTER')
-table_name = select_table_name(f'REGISTERED_COURSES_{semester}_{session}')
+registered_courses_table_name = select_table_name(f'REGISTERED_COURSES_{semester}_{session}')
+student_exam_table_name = select_table_name(f'STUDENTS_EXAM_{semester}_{session}')
 
-registered_courses = db.Table(table_name,
-                              db.Column('student_id', db.Integer, db.ForeignKey(
-                                  'students.id'), primary_key=True),
-                              db.Column('course_id', db.Integer, db.ForeignKey(
-                                  'courses.id'), primary_key=True)
-                              )
+registered_courses = db.Table(registered_courses_table_name,
+    db.Column('student_id', db.Integer, db.ForeignKey('students.id'), primary_key=True),
+    db.Column('course_id', db.Integer, db.ForeignKey('courses.id'), primary_key=True))
+
+student_exam_attendance = db.Table(student_exam_table_name,
+    db.Column('student_id', db.Integer, db.ForeignKey('students.id'), primary_key=True),
+    db.Column('course_id', db.Integer, db.ForeignKey('courses.id'), primary_key=True))
 
 
 class Student(db.Model):
@@ -37,6 +39,8 @@ class Student(db.Model):
     reg_complete = db.Column(db.Boolean, default=False)
     registered_courses = db.relationship('Course', secondary=registered_courses, backref=db.backref(
         'students_registered', lazy='dynamic'), lazy='dynamic')
+    student_exam_attendance = db.relationship('Course', secondary=student_exam_attendance, backref=db.backref(
+        'students_exam_attended', lazy='dynamic'), lazy='dynamic')
     has_registered_course = db.Column(db.Boolean, default=False)
 
     def __init__(self, firstname=None, lastname=None, othername=None, reg_no=None, email=None, password=None):
@@ -107,7 +111,7 @@ class Student(db.Model):
         return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
-        return f'User <name:{self.firstname}> <reg_no:{self.reg_no}>'
+        return f'Student <name:{self.firstname}> <reg_no:{self.reg_no}>'
 
     def save(self):
         db.session.add(self)

@@ -11,6 +11,10 @@ class Level(db.Model):
     def __init__(self, level=None):
         self.level = level
 
+    @staticmethod
+    def exists(level):
+        return Level.query.filter_by(level=level).count() > 0
+
     def save(self):
         db.session.add(self)
         db.session.commit()

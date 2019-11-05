@@ -38,14 +38,22 @@ schools = [
     {
         'name': 'School of Physical Sciences',
         'code': 'SOPS'
-    }
+    },
+    {
+        'name': 'School of General Studies',
+        'code': 'DGS'
+    },
 ]
 
 
 def populate_schools_table():
-    for school in schools:
-        School(name=school['name'], code=school['code']).save()
-    print('schools table populated succefully')
+    try:
+        for school in schools:
+            if not School.exists(code=school['code']):
+                School(name=school['name'], code=school['code']).save()
+        print('schools table populated succefully')
+    except Exception as e:
+        print(f'Something failed {e}')
 
 
 if __name__ == '__main__':
