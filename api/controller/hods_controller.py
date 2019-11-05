@@ -36,6 +36,7 @@ class HODSignup(Resource):
     @hod_api.response(201, 'New hod successfully registered')
     @hod_api.expect(hod_reg)
     def post(self):
+        ''' Signup a new HOD '''
         data = request.json
         payload = hod_api.payload or data
         schema = NewHODSchema()
@@ -56,6 +57,7 @@ class Me(Resource):
     @hod_login_required
     @hod_api.doc('View HOD details', security='apiKey')
     def get(self, decoded_payload):
+        ''' Get details of logged in HOD '''
         email = decoded_payload.get('email')
         response, code = HODService.get_me(email=email)
         return response, code
@@ -66,6 +68,7 @@ class EditMe(Resource):
     @hod_api.doc('Update HOD details', security='apiKey')
     @hod_api.expect(edit_me)
     def post(self, decoded_payload):
+        ''' Edit details of logged in HOD '''
         email = decoded_payload.get('email')
         data = request.json
         schema = EditHODSchema()
@@ -88,6 +91,7 @@ class LecturerList(Resource):
     @hod_login_required
     @hod_api.doc('Get All Lecturers in HOD department', security='apiKey')
     def get(self, decoded_payload):
+        ''' Get all lecturers in HOD's department '''
         email = decoded_payload.get('email')
         response, code = HODService.get_lecturers(email=email)
         return response, code
@@ -97,6 +101,7 @@ class CourseList(Resource):
     @hod_login_required
     @hod_api.doc('Get All Courses in HOD department per semester', security='apiKey')
     def get(self, semester, decoded_payload):
+        ''' Get all courses in HOD's department filtered by provided semester '''
         email = decoded_payload.get('email')
         response, code = HODService.get_courses(email=email, semester=semester)
         return response, code
@@ -107,6 +112,7 @@ class AssignCourses(Resource):
     @hod_api.doc('Assign Courses to Lecturers', security='apiKey')
     @hod_api.expect(assign_course_list)
     def post(self, decoded_payload):
+        ''' Assign courses to lecturers '''
         email = decoded_payload.get('email')
         data = request.json.get('payload')
         payload = hod_api.payload.get('payload') or data
@@ -118,6 +124,7 @@ class Assigned(Resource):
     @hod_login_required
     @hod_api.doc('Get All Courses Assigned per semester', security='apiKey')
     def get(self, semester, decoded_payload):
+        ''' View courses and assigned lecturers '''
         email = decoded_payload.get('email')
         response, code = HODService.get_assigned(email=email, semester=semester)
         return response, code
