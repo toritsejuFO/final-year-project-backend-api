@@ -145,3 +145,11 @@ class VerifyRegisteredCourse(Resource):
         response, code = StudentService.verify_registered_courses(
             reg_no=reg_no, course_code=course)
         return response, code
+
+@student_api.route('/registered/<string:course>/<string:department>')
+class RegisteredCourseStudentList(Resource):
+    def get(self, course, department):
+        ''' Return all the students from a department that have registered for a course '''
+        response, code = StudentService.get_registered_students(
+            course_code=course, department_code=department)
+        return response, code

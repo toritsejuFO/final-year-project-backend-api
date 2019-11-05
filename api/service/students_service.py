@@ -227,3 +227,37 @@ class StudentService():
         response['success'] = True
         response['message'] = 'Student has registered for this course'
         return response, 200
+
+    @staticmethod
+    def get_registered_students(course_code, department_code):
+        response = {}
+        try:
+            registered_students = Course.query.filter_by(code=course_code).first().students_registered
+        except Exception:
+            raise AppException('Internal Server Error', 500)
+
+        if not registered_students:
+            response['success'] = False
+            response['message'] = f'No student is registered for {course_code}'
+            return response, 404
+
+        try:
+            department = Department.query.filter_by(code=department_code).first()
+            students_by_dept = registered_students.filter_by(department=department).all()
+        except Exception:
+            raise AppException('Internal Server Error', 500)
+
+        if not students_by_dept:
+            response['success'] = False
+            response['message'] = f'No student from {department_code.upper()} is registered for {course_code}'
+            return response, 404
+
+        response['success'] = True
+        response['message'] = 'Students fetched successfully'
+        response['data'] = [{
+            'id': id + 1,
+            'reg_no': student.reg_no,
+            'name': f'{student.firstname} {student.lastname}',
+            'template': student.fingerprint_template
+        } for id, student in enumerate(students_by_dept)]
+        return response, 200
