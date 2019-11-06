@@ -261,3 +261,38 @@ class StudentService():
             'template': student.fingerprint_template
         } for id, student in enumerate(students_by_dept)]
         return response, 200
+
+    @staticmethod
+    def take_exam_attendance(reg_no, course_code):
+        response = {}
+        try:
+            student = Student.query.filter_by(reg_no=reg_no).first()
+            course = Course.query.filter_by(code=course_code).first()
+        except Exception:
+            raise AppException('Internal Server Error', 500)
+
+        if not student:
+            response['success'] = False
+            response['message'] = 'Student not found'
+            return response, 404
+
+        if not course:
+            response['success'] = False
+            response['message'] = 'Course not found'
+            return response, 404
+
+        if student.exam_attendance_taken(course):
+            response['success'] = False
+            response['message'] = 'Student has already taken exam attendance for this course'
+            return response, 403
+
+        try:
+            student.take_exam_attendance(course)
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+            raise AppException('Internal Server Error', 500)
+
+        response['success'] = True
+        response['message'] = 'Attendance taken'
+        return response, 200

@@ -10,13 +10,13 @@ from api.model import Level
 session = os.environ.get('CURRENT_REGISTERED_COURSES_SESSION')
 semester = os.environ.get('CURRENT_REGISTERED_COURSES_SEMESTER')
 registered_courses_table_name = select_table_name(f'REGISTERED_COURSES_{semester}_{session}')
-student_exam_table_name = select_table_name(f'STUDENTS_EXAM_{semester}_{session}')
+exam_table_name = select_table_name(f'STUDENTS_EXAM_{semester}_{session}')
 
 registered_courses = db.Table(registered_courses_table_name,
     db.Column('student_id', db.Integer, db.ForeignKey('students.id'), primary_key=True),
     db.Column('course_id', db.Integer, db.ForeignKey('courses.id'), primary_key=True))
 
-student_exam_attendance = db.Table(student_exam_table_name,
+exam_attendance = db.Table(exam_table_name,
     db.Column('student_id', db.Integer, db.ForeignKey('students.id'), primary_key=True),
     db.Column('course_id', db.Integer, db.ForeignKey('courses.id'), primary_key=True))
 
@@ -39,7 +39,7 @@ class Student(db.Model):
     reg_complete = db.Column(db.Boolean, default=False)
     registered_courses = db.relationship('Course', secondary=registered_courses, backref=db.backref(
         'students_registered', lazy='dynamic'), lazy='dynamic')
-    student_exam_attendance = db.relationship('Course', secondary=student_exam_attendance, backref=db.backref(
+    exam_attendance = db.relationship('Course', secondary=exam_attendance, backref=db.backref(
         'students_exam_attended', lazy='dynamic'), lazy='dynamic')
     has_registered_course = db.Column(db.Boolean, default=False)
 
@@ -77,6 +77,13 @@ class Student(db.Model):
 
     def is_registered(self, course):
         return self.registered_courses.filter(registered_courses.c.course_id == course.id).count() > 0
+
+    def take_exam_attendance(self, course):
+        if not self.exam_attendance_taken(course):
+            self.exam_attendance.append(course)
+
+    def exam_attendance_taken(self, course):
+        return self.exam_attendance.filter(exam_attendance.c.course_id == course.id).count() > 0
 
     @property
     def get_level(self):
