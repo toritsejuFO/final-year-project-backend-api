@@ -158,7 +158,14 @@ class VerifyRegisteredCourse(Resource):
 @student_api.route('/registered/<string:course>/<string:department>')
 class RegisteredCourseStudentList(Resource):
     def get(self, course, department):
-        ''' Return all the students from a department that have registered for a course '''
+        ''' HW: Get all the students from a department that have registered for a course '''
         response, code = StudentService.get_registered_students(
             course_code=course, department_code=department)
+        return response, code
+
+@student_api.route('/<string:reg_no>/exam/attendance/<string:course>')
+class ExamAttendance(Resource):
+    def get(self, reg_no, course):
+        ''' Take course exam attendance for student with provided reg number '''
+        response, code = StudentService.take_exam_attendance(reg_no=reg_no, course_code=course)
         return response, code
