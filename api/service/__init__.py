@@ -5,3 +5,4 @@ from api.service.lecturers_service import LecturerService
 from api.service.hods_service import HODService
 from api.service.departments_service import DepartmentService
 from api.service.schools_service import SchoolService
+from api.service.admins_service import AdminsService

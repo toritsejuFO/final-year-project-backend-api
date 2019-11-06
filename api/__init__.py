@@ -56,6 +56,7 @@ def create_app(config_name):
     from api.controller import auth_verification_api as auth_verification_ns
     from api.controller import current_api as current_ns
     from api.controller import school_api as school_ns
+    from api.controller import admin_api as admin_ns
     api.add_namespace(student_ns, path='/students')
     api.add_namespace(student_auth_ns, path='/students')
     api.add_namespace(course_ns, path='/courses')
@@ -67,6 +68,7 @@ def create_app(config_name):
     api.add_namespace(auth_verification_ns, path='/auth')
     api.add_namespace(current_ns, path='/current')
     api.add_namespace(school_ns, path='/schools')
+    api.add_namespace(admin_ns, path='/admins')
 
     return app
 
