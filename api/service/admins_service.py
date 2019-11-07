@@ -3,10 +3,24 @@ import os
 from collections import namedtuple
 
 from api import db, AppException, select_table_name
-from api.model import Course, Department
+from api.model import Course, Department, Admin
 
 
 class AdminsService():
+    @staticmethod
+    def create(data):
+        response = {}
+        try:
+            admin = Admin(**data)
+            admin.save()
+        except Exception:
+            db.session.rollback()
+            raise AppException('Internal Server Error', 500)
+
+        response['success'] = True
+        response['message'] = 'New admin registered successfully'
+        return response, 201
+
     @staticmethod
     def get_oar(session, semester, course_code, department_code):
         response = {}
