@@ -6,4 +6,5 @@ from api.model.departments_model import Department
 from api.model.courses_model import Course
 from api.model.lecturers_model import Lecturer
 from api.model.hods_model import HOD
+from api.model.admins_model import Admin
 from api.model.revoked_token_model import RevokedToken
