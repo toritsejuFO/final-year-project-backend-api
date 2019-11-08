@@ -3,13 +3,37 @@ import os
 from collections import namedtuple
 
 from api import db, AppException, select_table_name
-from api.model import Course, Department
+from api.model import Course, Department, Admin
 
 
 class AdminsService():
     @staticmethod
-    def get_oar(session, semester, course_code, department_code):
+    def create(data):
         response = {}
+        try:
+            admin = Admin(**data)
+            admin.save()
+        except Exception:
+            db.session.rollback()
+            raise AppException('Internal Server Error', 500)
+
+        response['success'] = True
+        response['message'] = 'New admin registered successfully'
+        return response, 201
+
+    @staticmethod
+    def get_oar(session, semester, course_code, department_code, email):
+        response = {}
+
+        try:
+            admin = Admin.query.filter_by(email=email).first()
+        except Exception:
+            raise AppException('Internal Server Error', 500)
+
+        if not admin:
+            response['success'] = False
+            response['message'] = 'Admin Not Found'
+            return response, 404
 
         # Find course and department
         try:

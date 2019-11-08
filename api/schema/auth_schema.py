@@ -17,6 +17,11 @@ HODLogin = namedtuple('HODLogin', [
     'password'
 ])
 
+AdminLogin = namedtuple('AdminLogin', [
+    'email',
+    'password'
+])
+
 
 class StudentLoginSchema(Schema):
     reg_no = fields.String(required=True, error_messages={'required': 'reg number is required'})
@@ -63,6 +68,24 @@ class HODLoginSchema(Schema):
     @post_load
     def new_hod(self, data, **kwargs):
         return HODLogin(**data)
+
+    @validates('email')
+    def validate_email(self, value):
+        if not value:
+            raise ValidationError('email cannot be empty')
+
+    @validates('password')
+    def validate_password(self, value):
+        if not value:
+            raise ValidationError('password cannot be empty')
+
+class AdminLoginSchema(Schema):
+    email = fields.String(required=True, error_messages={'required': 'email is required'})
+    password = fields.String(required=True, error_messages={'required': 'password is required'})
+
+    @post_load
+    def new_admin(self, data, **kwargs):
+        return AdminLogin(**data)
 
     @validates('email')
     def validate_email(self, value):
