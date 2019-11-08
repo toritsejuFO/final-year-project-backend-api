@@ -22,8 +22,18 @@ class AdminsService():
         return response, 201
 
     @staticmethod
-    def get_oar(session, semester, course_code, department_code):
+    def get_oar(session, semester, course_code, department_code, email):
         response = {}
+
+        try:
+            admin = Admin.query.filter_by(email=email).first()
+        except Exception:
+            raise AppException('Internal Server Error', 500)
+
+        if not admin:
+            response['success'] = False
+            response['message'] = 'Admin Not Found'
+            return response, 404
 
         # Find course and department
         try:

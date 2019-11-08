@@ -5,7 +5,7 @@ import jwt
 from flask import request
 
 from api import db, AppException
-from api.model import Student, RevokedToken, Lecturer, HOD
+from api.model import Student, RevokedToken, Lecturer, HOD, Admin
 from config import jwt_key
 
 class AuthService():
@@ -235,6 +235,81 @@ class AuthService():
         return response, 200
 
     @staticmethod
+    def login_admin(data):
+        response = {}
+        email = data['email']
+        password = data['password']
+
+        try:
+            admin = Admin.query.filter_by(email=email).first()
+        except Exception:
+            raise AppException('Internal Server Error', 500)
+
+        if not admin:
+            response['success'] = False
+            response['message'] = 'Invalid email or password'
+            return response, 401
+
+        if not admin.verify_password(password):
+            response['success'] = False
+            response['message'] = 'Invalid email or password'
+            return response, 401
+
+        encode_data = {
+            'email': admin.email,
+            'admin': True,
+            'entity': 'admin'
+        }
+        token = encode_auth_token(data=encode_data, expiry=datetime.utcnow() + timedelta(days=1))
+
+        if not isinstance(token, bytes):
+            response['success'] = False
+            response['message'] = token
+            return response, 500
+
+        response['success'] = True
+        response['message'] = 'Logged in successfully'
+        response['x-auth-token'] = token.decode()
+        return response, 200
+
+    @staticmethod
+    def logout_admin(auth_token):
+        response = {}
+        decoded_payload = decode_auth_token(auth_token=auth_token)
+
+        # Error decoding error
+        if isinstance(decoded_payload, str):
+            response['success'] = False
+            response['message'] = decoded_payload
+            return response, 401
+
+        # Ensure this method logs out only admins
+        if decoded_payload.get('admin') is None:
+            response['success'] = True
+            response['message'] = 'Unathorized to perform action'
+            return response, 403
+
+        # Check revoked token
+        try:
+            if RevokedToken.check(token=auth_token):
+                response['success'] = False
+                response['message'] = 'Revoked token. Please log in again'
+                return response, 403
+        except Exception:
+            raise AppException('Internal Server Error. Revoke check Error', 500)
+
+        # Mark token as revoked and logout student
+        try:
+            RevokedToken(token=auth_token).save()
+        except Exception:
+            db.session.rollback()
+            raise AppException('Internal Server Error', 500)
+
+        response['success'] = True
+        response['message'] = 'Logged out successfully'
+        return response, 200
+
+    @staticmethod
     def verify(auth_token):
         response = {}
         decoded_payload = decode_auth_token(auth_token=auth_token)
@@ -356,6 +431,38 @@ def lecturer_login_required(func):
     return wrapper
 
 def hod_login_required(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        response = {}
+        auth_token = request.headers.get('x-auth-token')
+        if not auth_token or auth_token is None:
+            response = {
+                'success': False,
+                'message': 'Please provide a token'
+            }
+            return response, 401
+
+        decoded_payload = decode_auth_token(auth_token=auth_token)
+
+        # Error decoding token
+        if isinstance(decoded_payload, str):
+            response['success'] = False
+            response['message'] = decoded_payload
+            return response, 401
+
+        # Check revoked token
+        try:
+            if RevokedToken.check(token=auth_token):
+                response['success'] = False
+                response['message'] = 'Revoked token. Please log in again'
+                return response, 403
+        except Exception:
+            raise AppException('Internal Server Error. Revoke Check Error', 500)
+
+        return func(*args, **kwargs, decoded_payload=decoded_payload)
+    return wrapper
+
+def admin_login_required(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         response = {}

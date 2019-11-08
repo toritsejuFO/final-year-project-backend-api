@@ -3,7 +3,7 @@ from flask_restplus import Resource, Namespace, fields
 from marshmallow import ValidationError
 
 from api.service import AuthService
-from api.schema import StudentLoginSchema, LecturerLoginSchema, HODLoginSchema
+from api.schema import StudentLoginSchema, LecturerLoginSchema, HODLoginSchema, AdminLoginSchema
 
 student_auth_api = Namespace(
     'students', description='API endpoints for authenticating Students')
@@ -27,6 +27,14 @@ hod_auth_api = Namespace(
 hod_login = hod_auth_api.model('HOD login', {
     'email': fields.String(required=True, description='HOD\'s email'),
     'password': fields.String(required=True, description='HOD\'s password'),
+})
+
+admin_auth_api = Namespace(
+    'admins', description='API endpoints for authenticating Admins')
+
+admin_login = admin_auth_api.model('Admin login', {
+    'email': fields.String(required=True, description='Admin\'s email'),
+    'password': fields.String(required=True, description='Admin\'s password'),
 })
 
 auth_verification_api = Namespace('auth', description='API endpoint for verifying auth token')
@@ -152,6 +160,46 @@ class HODLogout(Resource):
             }
             return response, 401
         response, code = AuthService.logout_hod(auth_token=auth_token)
+        return response, code
+
+@admin_auth_api.route('/signin')
+class AdminLogin(Resource):
+    @admin_auth_api.doc('Login a admin')
+    @admin_auth_api.response(200, 'Logged in successfully')
+    @admin_auth_api.expect(admin_login)
+    def post(self):
+        ''' Authenticate an admin '''
+        data = request.json
+        payload = admin_auth_api.payload or data
+        schema = AdminLoginSchema()
+
+        try:
+            new_payload = schema.load(payload)._asdict()
+        except ValidationError as e:
+            response = {
+                'success': False,
+                'error': e.messages
+            }
+            return response, 400
+
+        response, code = AuthService.login_admin(data=new_payload)
+        return response, code
+
+
+@admin_auth_api.route('/signout')
+class AdminLogout(Resource):
+    @admin_auth_api.doc('Log out an admin', security='apiKey')
+    @admin_auth_api.response(200, 'Logged out successfully')
+    def get(self):
+        ''' Logout an admin '''
+        auth_token = request.headers.get('x-auth-token')
+        if not auth_token or auth_token is None:
+            response = {
+                'success': False,
+                'message': 'Please provide a token'
+            }
+            return response, 401
+        response, code = AuthService.logout_admin(auth_token=auth_token)
         return response, code
 
 @auth_verification_api.route('/verify')
