@@ -281,6 +281,11 @@ class StudentService():
             response['message'] = 'Course not found'
             return response, 404
 
+        if not student.is_registered(course):
+            response['success'] = False
+            response['message'] = 'Student is not registered for this course'
+            return response, 403
+
         if student.exam_attendance_taken(course):
             response['success'] = False
             response['message'] = 'Student has already taken exam attendance for this course'
