@@ -10,14 +10,17 @@ from api import select_table_name
 
 session = os.environ.get('CURRENT_ASSIGNED_COURSES_SESSION')
 semester = os.environ.get('CURRENT_ASSIGNED_COURSES_SEMESTER')
-table_name = select_table_name(f'ASSIGNED_COURSES_{semester}_{session}')
+assigned_courses_table_name = select_table_name(f'ASSIGNED_COURSES_{semester}_{session}')
+lecturer_lectures_table_name = select_table_name(f'LECTURER_LECTURES_{semester}_{session}')
 
-assigned_courses = db.Table(table_name,
-                            db.Column('lecturer_id', db.Integer, db.ForeignKey(
-                                'lecturers.id'), primary_key=True),
-                            db.Column('course_id', db.Integer, db.ForeignKey(
-                                'courses.id'), primary_key=True)
-                            )
+assigned_courses = db.Table(assigned_courses_table_name,
+    db.Column('lecturer_id', db.Integer, db.ForeignKey('lecturers.id'), primary_key=True),
+    db.Column('course_id', db.Integer, db.ForeignKey('courses.id'), primary_key=True))
+
+lecture_attendance = db.Table(lecturer_lectures_table_name,
+    db.Column('lecturer_id', db.Integer, db.ForeignKey('lecturers.id'), primary_key=True),
+    db.Column('course_id', db.Integer, db.ForeignKey('courses.id'), primary_key=True),
+    db.Column('count', db.Integer, default=1))
 
 
 class Lecturer(db.Model):
@@ -29,7 +32,9 @@ class Lecturer(db.Model):
     department_id = db.Column(db.Integer, db.ForeignKey('departments.id'))
     password_hash = db.Column(db.String(128))
     assigned_courses = db.relationship('Course', secondary=assigned_courses,
-                                       backref=db.backref('lecturers_assigned', lazy='dynamic'), lazy='dynamic')
+        backref=db.backref('lecturers_assigned', lazy='dynamic'), lazy='dynamic')
+    lecture_attendance = db.relationship('Course', secondary=lecture_attendance,
+        backref=db.backref('lecturer_lecture_attended', lazy='dynamic'), lazy='dynamic')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __init__(self, name, email, department_code, password):
@@ -46,8 +51,8 @@ class Lecturer(db.Model):
             'email': self.email,
             'department': self.department.code,
             'school': self.department.school.code,
-            'registered_on': arrow.get(self.created_at).for_json(),
-            'registered_since': arrow.get(self.created_at).humanize(),
+            # 'registered_on': arrow.get(self.created_at).for_json(),
+            # 'registered_since': arrow.get(self.created_at).humanize(),
         }
         return json_lecturer
 
@@ -57,6 +62,22 @@ class Lecturer(db.Model):
 
     def is_assigned(self, course):
         return self.assigned_courses.filter(assigned_courses.c.course_id == course.id).count() > 0
+
+    def attend_lecture(self, course):
+        if not self.is_lecture_attended(course):
+            self.lecture_attendance.append(course)
+        else:
+            sql = f'''
+                UPDATE {lecturer_lectures_table_name}
+                SET count = count + 1
+                WHERE lecturer_id = {self.id}
+                AND course_id = {course.id}
+            '''
+            db.session.execute(sql)
+
+
+    def is_lecture_attended(self, course):
+        return self.lecture_attendance.filter(lecture_attendance.c.course_id == course.id).count() > 0
 
     @property
     def password(self):
