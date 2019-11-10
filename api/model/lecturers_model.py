@@ -10,8 +10,10 @@ from api import select_table_name
 
 session = os.environ.get('CURRENT_ASSIGNED_COURSES_SESSION')
 semester = os.environ.get('CURRENT_ASSIGNED_COURSES_SEMESTER')
+DB_NAME = os.environ.get('DB_NAME')
 assigned_courses_table_name = select_table_name(f'ASSIGNED_COURSES_{semester}_{session}')
 lecturer_lectures_table_name = select_table_name(f'LECTURER_LECTURES_{semester}_{session}')
+student_lectures_table_name = select_table_name(f'STUDENT_LECTURES_{semester}_{session}')
 
 assigned_courses = db.Table(assigned_courses_table_name,
     db.Column('lecturer_id', db.Integer, db.ForeignKey('lecturers.id'), primary_key=True),
@@ -47,6 +49,7 @@ class Lecturer(db.Model):
     @property
     def to_dict(self):
         json_lecturer = {
+            'id': self.id,
             'name': self.name,
             'email': self.email,
             'department': self.department.code,
@@ -66,7 +69,23 @@ class Lecturer(db.Model):
     def attend_lecture(self, course):
         if not self.is_lecture_attended(course):
             self.lecture_attendance.append(course)
+            # Create lecture day1 column in students lecture table if column doesn't exist
+            sql = f'''
+                SHOW COLUMNS
+                FROM {student_lectures_table_name}
+                LIKE 'day1'
+            '''
+            result = db.session.execute(sql)
+            column_exists = result.fetchone()
+
+            if not column_exists:
+                sql = f'''
+                    ALTER TABLE {student_lectures_table_name}
+                    ADD day1 INT NOT NULL DEFAULT 0
+                '''
+                db.session.execute(sql)
         else:
+            # Increment lecture attendance count for lecturer
             sql = f'''
                 UPDATE {lecturer_lectures_table_name}
                 SET count = count + 1
@@ -74,6 +93,34 @@ class Lecturer(db.Model):
                 AND course_id = {course.id}
             '''
             db.session.execute(sql)
+            db.session.commit()
+
+            # Get current lecturer lecture count
+            sql = f'''
+                SELECT count
+                FROM {lecturer_lectures_table_name}
+                WHERE lecturer_id = {self.id}
+                AND course_id = {course.id}
+                LIMIT 1
+            '''
+            result = db.session.execute(sql)
+            lecture_count = result.fetchone()[0]
+            
+            # Create lecture day column in students lecture table with current count if column doesn't exist
+            sql = f'''
+                SHOW COLUMNS
+                FROM {student_lectures_table_name}
+                LIKE 'day{lecture_count}'
+            '''
+            result = db.session.execute(sql)
+            column_exists = result.fetchone()
+
+            if not column_exists:
+                sql = f'''
+                    ALTER TABLE {student_lectures_table_name}
+                    ADD day{lecture_count} INT NOT NULL DEFAULT 0
+                '''
+                db.session.execute(sql)
 
 
     def is_lecture_attended(self, course):
