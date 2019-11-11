@@ -47,3 +47,13 @@ class Me(Resource):
         email = decoded_payload.get('email')
         response, code = LecturerService.get_me(email=email)
         return response, code
+
+@lecturer_api.route('/lecture/attendance/<string:course>')
+class MarkLecturerLectureAttendance(Resource):
+    @lecturer_login_required
+    @lecturer_api.doc('Mark attendance for lecturer for a lecture', security='apiKey')
+    def get(self, course, decoded_payload):
+        ''' 'Mark attendance for lecturer for a lecture '''
+        email = decoded_payload.get('email')
+        response, code = LecturerService.mark_lecture_attendance(email=email, course_code=course)
+        return response, code

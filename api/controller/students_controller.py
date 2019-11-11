@@ -169,3 +169,11 @@ class ExamAttendance(Resource):
         ''' Take course exam attendance for student with provided reg number '''
         response, code = StudentService.take_exam_attendance(reg_no=reg_no, course_code=course)
         return response, code
+
+@student_api.route('/<string:reg_no>/lecture/attendance/<string:course>/<string:lecturer>')
+class LectureAttendance(Resource):
+    def get(self, reg_no, course, lecturer):
+        ''' Take course lecture attendance for student with provided reg number '''
+        response, code = StudentService.take_lecture_attendance(
+            reg_no=reg_no, course_code=course, lecturer_id=lecturer)
+        return response, code

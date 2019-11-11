@@ -1,5 +1,5 @@
 from api import db, AppException
-from api.model import Student, Department, Level, Course
+from api.model import Student, Department, Level, Course, Lecturer
 
 
 class StudentService():
@@ -281,6 +281,11 @@ class StudentService():
             response['message'] = 'Course not found'
             return response, 404
 
+        if not student.is_registered(course):
+            response['success'] = False
+            response['message'] = 'Student is not registered for this course'
+            return response, 403
+
         if student.exam_attendance_taken(course):
             response['success'] = False
             response['message'] = 'Student has already taken exam attendance for this course'
@@ -288,6 +293,47 @@ class StudentService():
 
         try:
             student.take_exam_attendance(course)
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+            raise AppException('Internal Server Error', 500)
+
+        response['success'] = True
+        response['message'] = 'Attendance taken'
+        return response, 200
+
+    @staticmethod
+    def take_lecture_attendance(reg_no, course_code, lecturer_id):
+        response = {}
+        try:
+            student = Student.query.filter_by(reg_no=reg_no).first()
+            course = Course.query.filter_by(code=course_code).first()
+            lecturer = Lecturer.query.filter_by(id=lecturer_id).first()
+        except Exception:
+            raise AppException('Internal Server Error', 500)
+
+        if not student:
+            response['success'] = False
+            response['message'] = 'Student not found'
+            return response, 404
+
+        if not course:
+            response['success'] = False
+            response['message'] = 'Course not found'
+            return response, 404
+
+        if not lecturer:
+            response['success'] = False
+            response['message'] = 'Lecturer not found'
+            return response, 404
+
+        if not student.is_registered(course):
+            response['success'] = False
+            response['message'] = 'Student is not registered for this course'
+            return response, 403
+
+        try:
+            student.attend_lecture(course, lecturer)
             db.session.commit()
         except Exception:
             db.session.rollback()

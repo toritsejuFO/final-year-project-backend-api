@@ -41,8 +41,30 @@ class ExamOAR(Resource):
     @admin_login_required
     @admin_api.doc('Get data for exam OAR sheet', security='apiKey')
     def get(self, session, semester, course, department, decoded_payload):
-        ''' Get all students froma a department who attended exam for a course '''
+        ''' Get all students from a department who attended exam for a course '''
         email = decoded_payload.get('email')
-        response, code = AdminsService.get_oar(
+        response, code = AdminsService.get_exam_oar(
             session=session, semester=semester, course_code=course, department_code=department, email=email)
+        return response, code
+
+@admin_api.route('/lecture/oar/<string:session>/<string:semester>/<string:course>/<string:department>')
+class LectureOAR(Resource):
+    @admin_login_required
+    @admin_api.doc('Get data for lecture OAR sheet', security='apiKey')
+    def get(self, session, semester, course, department, decoded_payload):
+        ''' Get all students from a department who attended exam for a course '''
+        email = decoded_payload.get('email')
+        response, code = AdminsService.get_lecture_oar(
+            session=session, semester=semester, course_code=course, department_code=department, email=email)
+        return response, code
+
+@admin_api.route('/mastersheet/<string:session>/<string:semester>/<string:level>/<string:department>')
+class LectureOAR(Resource):
+    @admin_login_required
+    @admin_api.doc('Get data for master sheet', security='apiKey')
+    def get(self, session, semester, level, department, decoded_payload):
+        ''' Get all students from a department and level who attended lecture, for all courses '''
+        email = decoded_payload.get('email')
+        response, code = AdminsService.get_mastersheet(
+            session=session, semester=semester, level=level, department_code=department, email=email)
         return response, code
